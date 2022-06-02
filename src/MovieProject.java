@@ -1,3 +1,9 @@
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class MainApp {
@@ -16,6 +22,7 @@ interface Menu
 	//화면 출력과 이동을 통해 프로그램이 동작하게끔 유도	
 	void menuPrint(); //메뉴를 화면에 출력
 	void choose();	//사용자가 메뉴를 고르면 동작
+
 }
 abstract class AbstractMenu implements Menu
 {
@@ -46,13 +53,14 @@ class MainMenu extends AbstractMenu implements Menu
 		System.out.println("================================");		
 		System.out.println("1.영화 소개 / 2.영화 예매 / 3.예매 확인 / 4.예매 취소 / 5.관리자메뉴 / 6.종료");
 		System.out.println("메뉴를 선택하세요.");
+		int num = sc.nextInt();
 		
 		while(true)
 		{
 			switch(num)
 				{
 				case 1:
-					
+					Intro();
 					break;
 				case 2:
 					break;
@@ -90,6 +98,38 @@ class Movie
 {
 	//영화 정보를 관리하는 클래스
 	//영화 파일 입출력을 담당
+	int num;
+	String name;
+	String genre;
+	Movie()
+	{
+		
+	}
+	Movie(int num, String name, String genre)
+	{
+		this.num = num;
+		this.name = name;
+		this.genre = genre;
+	}
+	public int getNum() {
+		return num;
+	}
+	public void setNum(int num) {
+		this.num = num;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getGenre() {
+		return genre;
+	}
+	public void setGenre(String genre) {
+		this.genre = genre;
+	}
+	
 }
 class Reservation
 {
@@ -98,7 +138,7 @@ class Reservation
 }
 class Seats
 {
-	//예매 좌석을 관리하는 클래스
+	//예매 좌석을 관리하는 클래스, 좌석은 영화별로 다르게 저장되어야...
 	int[][] seat = new int[5][9];
 	int number=-2;	//예약이 끝난 좌석은 1, 빈 좌석은 0, 우리는 OX, -1입력시 종료는,,,
 	boolean isFull = false;
@@ -132,7 +172,8 @@ class Seats
 			System.out.println("좌석을 선택하세요(예 : E-9)");
 			System.out.println("처음으로 돌아가려면 'q'를 입력하세요.");
 			
-			number = sc.next(); //스트링으로 받아야하네
+			Scanner sc = new Scanner(System.in);
+			int number = sc.nextInt(); //스트링으로 받아야하네
 			if((number>=1 && number<=10) || number==-1)
 			{
 				if(number == -1)
@@ -175,13 +216,58 @@ class Seats
 }
 class Intro
 {
-	//영화 내용을 소개하는 클래스
-	Intro()
-	{
+	//영화 내용을 소개하는 클래스 , movies.txt를 불러서 읽어야 하나,,,
+
+	File file = new File("src/movie.txt");	
+	
+	String mvname;
+	Movie movie=new Movie();
 		
-	}
-	Intro(String[] name)
-	{
+	Intro() throws IOException
+	{			
+		FileReader fr = new FileReader(file);
+		BufferedReader br = new BufferedReader(fr);
+		String str=null;
+		ArrayList<Movie> al = new ArrayList<Movie>();
 		
-	}
+		while((str=br.readLine()) !=null)
+		{
+			System.out.println(str); // 확인용, 숨기기
+			String[] strArray = str.split(",");
+			
+			movie = new Movie(Integer.valueOf(strArray[0]),strArray[1],strArray[2]);
+			al.add(movie);
+		}
+		br.close();
+		fr.close();
+		
+		System.out.println("정보를 확인할 영화를 선택하세요");
+		for(int i=0; i<al.size(); i++)
+		{
+			String name = al.get(i).getName();
+			System.out.print((i+1)+". "+name+" / ");
+		}
+		System.out.println();
+		System.out.println();
+		
+		Scanner sc = new Scanner(System.in);
+		int no = sc.nextInt(); // 사용자가 입력한 넘버	
+		
+		// 사용자가 선택한 번호 불러오기
+		for(int i=0; i<al.size(); i++) 
+		{
+			movie = al.get(i);
+			if(movie.getNum() == no) //사용자가 입력한 값 대입
+			{
+				mvname = movie.getName();
+				String path2 ="src/test/"+mvname+".txt";
+				FileReader fr2 = new FileReader(path2);
+				BufferedReader br2 = new BufferedReader(fr2);
+				while((str=br2.readLine()) !=null)
+				{
+					System.out.println(str);
+				}
+			}
+		}
+	}	//이전 화면으로 돌아가기, 예매하기 두개의 메뉴
 }
