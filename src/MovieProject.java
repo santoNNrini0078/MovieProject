@@ -143,7 +143,7 @@ class Seats
 	int number=-2;	//예약이 끝난 좌석은 1, 빈 좌석은 0, 우리는 OX, -1입력시 종료는,,,
 	boolean isFull = false;
 		
-	void viewSeat(int[][] seat)
+	void viewSeat(Movie mv) //예매한 좌석번호를 배열로 변환하여 담아서 출력?
 	{
 		System.out.println("=======================");
 		System.out.println("      S C R E E N      ");
@@ -152,13 +152,13 @@ class Seats
 		{
 			System.out.print((char)(65+i)); //A,B,C,D...
 			for(int j=0; j<seat[i].length; j++)
-			{
+			{ //if문으로 좌석이 예약되어 있으면 X 그렇지 않으면 O 출력
 				System.out.print(" O");
 			}
 			System.out.println();
 		}
 		System.out.println("  1 2 3 4 5 6 7 8 9");
-	}
+	}// 사용자가 입력 범위를 벗어나면 제대로 입력하라고 알려주기
 	void choose()
 	{
 		while(number != -1 || isFull ==false)
