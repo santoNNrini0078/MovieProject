@@ -91,7 +91,7 @@ class AdminMenu extends AbstractMenu implements Menu
 	}
 	public void choose()
 	{
-		
+		dfdf
 	}
 }
 class Movie
