@@ -12,7 +12,7 @@ public class MainApp {
 
 	public static void main(String[] args) {
 
-		//ì˜í™” ì˜ˆë§¤í•˜ê¸°		
+		//¿µÈ­ ¿¹¸ÅÇÏ±â		
 		Scanner sc = new Scanner(System.in);
 		MainMenu main = new MainMenu();
 		main.choose();	
@@ -20,21 +20,21 @@ public class MainApp {
 }
 interface Menu
 {
-	//í™”ë©´ ì¶œë ¥ê³¼ ì´ë™ì„ í†µí•´ í”„ë¡œê·¸ë¨ì´ ë™ì‘í•˜ê²Œë” ìœ ë„	
-	void menuPrint(); //ë©”ë‰´ë¥¼ í™”ë©´ì— ì¶œë ¥
-	void choose();	//ì‚¬ìš©ìê°€ ë©”ë‰´ë¥¼ ê³ ë¥´ë©´ ë™ì‘
+	//È­¸é Ãâ·Â°ú ÀÌµ¿À» ÅëÇØ ÇÁ·Î±×·¥ÀÌ µ¿ÀÛÇÏ°Ô²û À¯µµ	
+	void menuPrint(); //¸Ş´º¸¦ È­¸é¿¡ Ãâ·Â
+	void choose();	//»ç¿ëÀÚ°¡ ¸Ş´º¸¦ °í¸£¸é µ¿ÀÛ
 }
 abstract class AbstractMenu implements Menu
 {
-	//Menu ì¸í„°í˜ì´ìŠ¤ë¥¼ êµ¬í˜„í•˜ëŠ” ì¶”ìƒ í´ë˜ìŠ¤
-	//ë©”ì¸ë©”ë‰´(MainMenu)ì™€ ê´€ë¦¬ìë©”ë‰´(AdminMenu)ì˜ ë¶€ëª¨í´ë˜ìŠ¤	
+	//Menu ÀÎÅÍÆäÀÌ½º¸¦ ±¸ÇöÇÏ´Â Ãß»ó Å¬·¡½º
+	//¸ŞÀÎ¸Ş´º(MainMenu)¿Í °ü¸®ÀÚ¸Ş´º(AdminMenu)ÀÇ ºÎ¸ğÅ¬·¡½º	
 	public abstract void menuPrint();
 	public abstract void choose();
 }
 
-class MainMenu extends AbstractMenu implements Menu
+class MainMenu extends AbstractMenu implements Menu	//¸ŞÀÎ¸Ş´º µ¿ÀÛÈ®ÀÎ O
 {	
-	//ë©”ì¸ ë©”ë‰´ì˜ ì¶œë ¥ê³¼ ì…ë ¥ì— ë”°ë¥¸ ì²˜ë¦¬ë¥¼ ë‹´ë‹¹	
+	//¸ŞÀÎ ¸Ş´ºÀÇ Ãâ·Â°ú ÀÔ·Â¿¡ µû¸¥ Ã³¸®¸¦ ´ã´ç	
 	Scanner sc = new Scanner(System.in);
 	private int menu;
 	MainMenu()
@@ -44,18 +44,18 @@ class MainMenu extends AbstractMenu implements Menu
 	public void menuPrint()
 	{
 		System.out.println("================================");
-		System.out.println("==========ì˜í™” ì˜ˆë§¤ í”„ë¡œê·¸ë¨=========");
+		System.out.println("==========¿µÈ­ ¿¹¸Å ÇÁ·Î±×·¥=========");
 		System.out.println("================================");	
-		System.out.println("1.ì˜í™” ì†Œê°œ / 2.ì˜í™” ì˜ˆë§¤ / 3.ì˜ˆë§¤ í™•ì¸ / 4.ì˜ˆë§¤ ì·¨ì†Œ / 5.ê´€ë¦¬ìë©”ë‰´ / 6.ì¢…ë£Œ");
-		System.out.println("ë©”ë‰´ë¥¼ ì„ íƒí•˜ì„¸ìš”.");
+		System.out.println("1.¿µÈ­ ¼Ò°³ / 2.¿µÈ­ ¿¹¸Å / 3.¿¹¸Å È®ÀÎ / 4.¿¹¸Å Ãë¼Ò / 5.°ü¸®ÀÚ¸Ş´º / 6.Á¾·á");
+		System.out.println("¸Ş´º¸¦ ¼±ÅÃÇÏ¼¼¿ä.");
 		menu = sc.nextInt();
 		
 	}	
 	public void choose()
 	{
-		
 		while(true)
 		{
+			menuPrint();
 			switch(menu)
 				{
 				case 1:
@@ -67,31 +67,88 @@ class MainMenu extends AbstractMenu implements Menu
 				case 4:
 					break;
 				case 5:
+					AdminMenu am=new AdminMenu();
+					am.menuPrint();		//°ü¸®ÀÚ¸Ş´º »ı¼ºÀÚ¿Í ¸Ş¼Òµå ½ÇÇà
 					break;
 				case 6:
 					break;
 				default:
-					System.out.println("ì˜ëª»ì„ íƒí•˜ì…¨ìŠµë‹ˆë‹¤.");	
+					System.out.println("Àß¸ø¼±ÅÃÇÏ¼Ì½À´Ï´Ù.");	
+					break;
 			}
 		}			
 	}
 }
-class AdminMenu extends AbstractMenu implements Menu
+class AdminMenu extends AbstractMenu implements Menu //°ü¸®ÀÚ¸Ş´º µ¿ÀÛÈ®ÀÎ O
 {
-	//ê´€ë¦¬ì ë©”ë‰´ì˜ ì¶œë ¥ê³¼ ì…ë ¥ì— ë”°ë¥¸ ì²˜ë¦¬ë¥¼ ë‹´ë‹¹
+	//°ü¸®ÀÚ ¸Ş´ºÀÇ Ãâ·Â°ú ÀÔ·Â¿¡ µû¸¥ Ã³¸®¸¦ ´ã´ç
+	Scanner sc=new Scanner(System.in);
 	public void menuPrint()
 	{
-		
+		System.out.println("°ü¸®ÀÚ ¸Ş´ºÀÔ´Ï´Ù. ºñ¹Ğ¹øÈ£¸¦ ÀÔ·ÂÇØÁÖ¼¼¿ä.");
+		int passwd=1234;
+		while(true)
+		{
+			int adpass=sc.nextInt();
+			if(passwd==adpass)
+			{
+				System.out.println("ÀÎÁõ¿¡ ¼º°øÇÏ¿´½À´Ï´Ù.");
+				choose();
+			}
+			else
+			{
+				System.out.println("ºñ¹Ğ¹øÈ£°¡ Æ²·È½À´Ï´Ù. ´Ù½Ã ÀÔ·ÂÇØÁÖ¼¼¿ä.");
+			}
+		}
 	}
 	public void choose()
+	{
+		while(true)
+		{
+			System.out.println("1.¿µÈ­ µî·ÏÇÏ±â / 2.¿µÈ­ ¸ñ·Ïº¸±â / 3.¿µÈ­ »èÁ¦ÇÏ±â / 4.¸ŞÀÎ¸Ş´º·Î ÀÌµ¿ÇÏ±â");
+			System.out.println("¸Ş´º¸¦ ¼±ÅÃÇØÁÖ¼¼¿ä.");
+			int num=sc.nextInt();
+			switch(num)
+			{
+				case 1:
+					AdminMovie am=new AdminMovie();
+					break;
+				case 2:
+					MovieList ml=new MovieList();
+					break;
+				case 3:
+					MovieRemove mr=new MovieRemove();
+					break;
+				case 4:
+					MainMenu mm=new MainMenu();
+					mm.menuPrint();
+					break;
+				default:
+					System.out.println("1~4¹ø Áß¿¡ ´Ù½Ã ÀÔ·ÂÇØÁÖ¼¼¿ä.");
+					break;
+			}
+		}
+	}
+}
+class AdminMovie	//¿µÈ­ µî·ÏÇÏ±â Å¬·¡½º
+{
+	void FileRead()
 	{
 		
 	}
 }
+class MovieList		//¿µÈ­ ¸ñ·Ïº¸±â Å¬·¡½º
+{
+	
+}
+class MovieRemove	//¿µÈ­ »èÁ¦ÇÏ±â Å¬·¡½º
+{
+	
+}
 class Movie
 {
-	//ì˜í™” ì •ë³´ë¥¼ ê´€ë¦¬í•˜ëŠ” í´ë˜ìŠ¤
-	//ì˜í™” íŒŒì¼ ì…ì¶œë ¥ì„ ë‹´ë‹¹
+	//¿µÈ­ Á¤º¸¸¦ °ü¸®ÇÏ´Â Å¬·¡½º
+	//¿µÈ­ ÆÄÀÏ ÀÔÃâ·ÂÀ» ´ã´ç
 	int no;
 	long stamp;
 	String name;
@@ -135,13 +192,13 @@ class Movie
 }
 class Reservation extends Movie
 {
-	//ì˜ˆë§¤ ì •ë³´ë¥¼ ê´€ë¦¬í•˜ëŠ” í´ë˜ìŠ¤
-	//ì˜ˆë§¤ íŒŒì¼ ì…ì¶œë ¥ì„ ë‹´ë‹¹
+	//¿¹¸Å Á¤º¸¸¦ °ü¸®ÇÏ´Â Å¬·¡½º
+	//¿¹¸Å ÆÄÀÏ ÀÔÃâ·ÂÀ» ´ã´ç
 	int no=0;
 	long reStamp=0;
 	long stamp=0;	
-	String name="aaa"; //ì‚¬ìš©ìê°€ ì…ë ¥í•˜ëŠ” ê°’ 
-	String seat="a-1"; //ì‚¬ìš©ìê°€ ì…ë ¥í•˜ëŠ” ê°’String name;
+	String name="aaa"; //»ç¿ëÀÚ°¡ ÀÔ·ÂÇÏ´Â °ª 
+	String seat="a-1"; //»ç¿ëÀÚ°¡ ÀÔ·ÂÇÏ´Â °ªString name;
 	
 	ArrayList<Movie> al = new ArrayList<Movie>();
 	Reservation(int no, long reStamp, long stamp, String name, String seat)
@@ -153,7 +210,7 @@ class Reservation extends Movie
 		this.seat=seat;
 	}
 	
-	void print() throws IOException //ì˜í™” ëª©ë¡ì„ ì†Œê°œ / ë”°ë¡œ í´ë˜ìŠ¤ë¥¼ ë§Œë“¤ ìˆ˜ ìˆë‚˜
+	void print() throws IOException //¿µÈ­ ¸ñ·ÏÀ» ¼Ò°³ / µû·Î Å¬·¡½º¸¦ ¸¸µé ¼ö ÀÖ³ª
 	{
 		File file = new File("src/movie.txt");	
 		FileReader fr = new FileReader(file);
@@ -162,16 +219,16 @@ class Reservation extends Movie
 		
 		while((str=br.readLine()) !=null)
 		{
-			System.out.print(str);	//ì˜í™” ëª©ë¡ë³´ì—¬ì£¼ê¸°
+			System.out.print(str);	//¿µÈ­ ¸ñ·Ïº¸¿©ÁÖ±â
 		}
 		br.close();
 		fr.close();
 		
-		System.out.println("ì˜í™”ë¥¼ ì„ íƒí•˜ì„¸ìš”");
+		System.out.println("¿µÈ­¸¦ ¼±ÅÃÇÏ¼¼¿ä");
 		Scanner sc = new Scanner(System.in);
-		int num = sc.nextInt(); // ì‚¬ìš©ìê°€ ì…ë ¥í•œ ë„˜ë²„	
+		int num = sc.nextInt(); // »ç¿ëÀÚ°¡ ÀÔ·ÂÇÑ ³Ñ¹ö	
 		
-		name = "";//ë¬´ë¹„ì—ì„œ ê°€ì ¸ì˜¤ê¸°
+		name = "";//¹«ºñ¿¡¼­ °¡Á®¿À±â
 		stamp = System.currentTimeMillis();
 	}	
 		
@@ -192,20 +249,20 @@ class Reservation extends Movie
 	}
 
 	
-	void write() throws IOException //ì˜ˆë§¤ ì •ë³´ ì €ì¥í•˜ê¸° //0504ì»¤í”¼ë©”ì¸ì°¸ê³ 
+	void write() throws IOException //¿¹¸Å Á¤º¸ ÀúÀåÇÏ±â //0504Ä¿ÇÇ¸ŞÀÎÂü°í
 	{
 		File file = new File("src/reservation.txt");
-		FileWriter fw = new FileWriter(file,true); //íŒŒì¼ì´ ë‚ ì•„ê°€ì§€ ì•Šê²Œ ì¶”ê°€í•˜ê¸° (name,append)
+		FileWriter fw = new FileWriter(file,true); //ÆÄÀÏÀÌ ³¯¾Æ°¡Áö ¾Ê°Ô Ãß°¡ÇÏ±â (name,append)
 		BufferedWriter bw = new BufferedWriter(fw);
 		
 		if (!file.exists())
 		{
-			System.out.println("íŒŒì¼ì„ ìƒì„±í•©ë‹ˆë‹¤.");
+			System.out.println("ÆÄÀÏÀ» »ı¼ºÇÕ´Ï´Ù.");
 			file.createNewFile();
 		}		
 		
 		
-		bw.write(no+","+reStamp+","+stamp+","+name+","+seat); //ì €ì¥	ë„˜ë²„ëŠ” ì–´ë–»ê²Œ ì €ì¥?	
+		bw.write(no+","+reStamp+","+stamp+","+name+","+seat); //ÀúÀå	³Ñ¹ö´Â ¾î¶»°Ô ÀúÀå?	
 		
 		bw.close();
 		fw.close();
@@ -213,9 +270,9 @@ class Reservation extends Movie
 }
 class Seats
 {
-	//ì˜ˆë§¤ ì¢Œì„ì„ ê´€ë¦¬í•˜ëŠ” í´ë˜ìŠ¤, ì¢Œì„ì€ ì˜í™”ë³„ë¡œ ë‹¤ë¥´ê²Œ ì €ì¥ë˜ì–´ì•¼...
+	//¿¹¸Å ÁÂ¼®À» °ü¸®ÇÏ´Â Å¬·¡½º, ÁÂ¼®Àº ¿µÈ­º°·Î ´Ù¸£°Ô ÀúÀåµÇ¾î¾ß...
 	int[][] seat = new int[5][9];
-	int number=-2;	//ì˜ˆì•½ì´ ëë‚œ ì¢Œì„ì€ 1, ë¹ˆ ì¢Œì„ì€ 0, ìš°ë¦¬ëŠ” OX, -1ì…ë ¥ì‹œ ì¢…ë£ŒëŠ”,,,
+	int number=-2;	//¿¹¾àÀÌ ³¡³­ ÁÂ¼®Àº 1, ºó ÁÂ¼®Àº 0, ¿ì¸®´Â OX, -1ÀÔ·Â½Ã Á¾·á´Â,,,
 	boolean isFull = false;
 	String str=null;
 	
@@ -231,18 +288,18 @@ class Seats
 		
 		while((str=br.readLine()) !=null)
 		{
-			System.out.println(str); // í™•ì¸ìš©, ìˆ¨ê¸°ê¸°	
+			System.out.println(str); // È®ÀÎ¿ë, ¼û±â±â	
 			String[] strArray = str.split(",");
 			
 			Reservation re = new Reservation(Integer.valueOf(strArray[0]),
-					Long.valueOf(strArray[1]),Long.valueOf(strArray[2]),strArray[3],strArray[4]); //ì˜í™” ì†Œê°œíŒŒì¼ í˜•ì‹ì— ë§ê²Œ ë³€ê²½
+					Long.valueOf(strArray[1]),Long.valueOf(strArray[2]),strArray[3],strArray[4]); //¿µÈ­ ¼Ò°³ÆÄÀÏ Çü½Ä¿¡ ¸Â°Ô º¯°æ
 			al.add(re);
 		}		
 		br.close();
 		fr.close();		
 	}
 
-	void viewSeat(Reservation re) //ì˜ˆë§¤í•œ ì¢Œì„ë²ˆí˜¸ë¥¼ ë°°ì—´ë¡œ ë³€í™˜í•˜ì—¬ ë‹´ì•„ì„œ ì¶œë ¥? //ë¬´ë¹„ë¥¼ ì–´ë””ì„œ ê°€ì ¸ì˜¤ë‚˜?
+	void viewSeat(Reservation re) //¿¹¸ÅÇÑ ÁÂ¼®¹øÈ£¸¦ ¹è¿­·Î º¯È¯ÇÏ¿© ´ã¾Æ¼­ Ãâ·Â? //¹«ºñ¸¦ ¾îµğ¼­ °¡Á®¿À³ª?
 	{	
 		
 		System.out.println("=======================");
@@ -251,29 +308,29 @@ class Seats
 		
 		for(int i=0; i<al.size(); i++)
 		{
-			if(al.get(i).getName().equals(re.getName())) //ì„ íƒí•œ ì˜í™” ì´ë¦„ê³¼ ì˜ˆë§¤ íŒŒì¼ì˜ ì˜í™” ì´ë¦„ì´ ê°™ì€ ê²½ìš°ì—
+			if(al.get(i).getName().equals(re.getName())) //¼±ÅÃÇÑ ¿µÈ­ ÀÌ¸§°ú ¿¹¸Å ÆÄÀÏÀÇ ¿µÈ­ ÀÌ¸§ÀÌ °°Àº °æ¿ì¿¡
 			{
-				String sNo = al.get(i).getSeat(); //í•´ë‹¹ ì˜í™”ì˜ ì˜ˆë§¤ëœ ì¢Œì„ ë²ˆí˜¸ë¥¼ ë¶ˆëŸ¬ì˜¨ë‹¤.
-				String[] seatNo = sNo.split("-"); //ì¢Œì„ ë²ˆí˜¸ëŠ” ë¶€í˜¸ë¥¼ ê¸°ì¤€ìœ¼ë¡œ ë‚˜ëˆ„ì–´ ë°°ì—´ì— ì €ì¥í•œë‹¤.
+				String sNo = al.get(i).getSeat(); //ÇØ´ç ¿µÈ­ÀÇ ¿¹¸ÅµÈ ÁÂ¼® ¹øÈ£¸¦ ºÒ·¯¿Â´Ù.
+				String[] seatNo = sNo.split("-"); //ÁÂ¼® ¹øÈ£´Â ºÎÈ£¸¦ ±âÁØÀ¸·Î ³ª´©¾î ¹è¿­¿¡ ÀúÀåÇÑ´Ù.
 				
 				for(int j=0; j<seat.length; j++)
 				{
 					System.out.print((char)(65+j)); //A,B,C,D...
 					for(int k=0; k<seat[j].length; k++)
-					{ //ifë¬¸ìœ¼ë¡œ ì¢Œì„ì´ ì˜ˆì•½ë˜ì–´ ìˆìœ¼ë©´ X ê·¸ë ‡ì§€ ì•Šìœ¼ë©´ O ì¶œë ¥
+					{ //if¹®À¸·Î ÁÂ¼®ÀÌ ¿¹¾àµÇ¾î ÀÖÀ¸¸é X ±×·¸Áö ¾ÊÀ¸¸é O Ãâ·Â
 						
-						if(seatNo.equals(seat[j][k])) //(E,9)ì™€ ê°™ì´ ë‚˜ë‰œ ì¢Œì„ ë²ˆí˜¸ì™€ seatì˜ ì¢Œì„ì„ ë¹„êµí•˜ì—¬ ê°™ìœ¼ë©´ X
+						if(seatNo.equals(seat[j][k])) //(E,9)¿Í °°ÀÌ ³ª´¶ ÁÂ¼® ¹øÈ£¿Í seatÀÇ ÁÂ¼®À» ºñ±³ÇÏ¿© °°À¸¸é X
 						{
 							System.out.print(" X");
 						}
 						else {
-						System.out.print(" O");	//ê·¸ë ‡ì§€ ì•Šìœ¼ë©´ Oë¥¼ ì¶œë ¥í•œë‹¤.
+						System.out.print(" O");	//±×·¸Áö ¾ÊÀ¸¸é O¸¦ Ãâ·ÂÇÑ´Ù.
 						}
 					}
 					System.out.println();
 				}
 				System.out.println("  1 2 3 4 5 6 7 8 9");
-			}// ì‚¬ìš©ìê°€ ì…ë ¥ ë²”ìœ„ë¥¼ ë²—ì–´ë‚˜ë©´ ì œëŒ€ë¡œ ì…ë ¥í•˜ë¼ê³  ì•Œë ¤ì£¼ê¸°
+			}// »ç¿ëÀÚ°¡ ÀÔ·Â ¹üÀ§¸¦ ¹ş¾î³ª¸é Á¦´ë·Î ÀÔ·ÂÇÏ¶ó°í ¾Ë·ÁÁÖ±â
 			
 		}
 
@@ -281,39 +338,39 @@ class Seats
 	}
 	void choose()
 	{
-		while(number!='q' || isFull ==false) //numberê°€ ì•„ë‹Œë°,,,
+		while(number!='q' || isFull ==false) //number°¡ ¾Æ´Ñµ¥,,,
 		{
 			isFull = isFull(seat);
 			if(isFull)
 			{
-				System.out.println("ì˜ˆì•½ì´ ëª¨ë‘ ì™„ë£Œë˜ì—ˆìŠµë‹ˆë‹¤.");
+				System.out.println("¿¹¾àÀÌ ¸ğµÎ ¿Ï·áµÇ¾ú½À´Ï´Ù.");
 				break;
 			}
-			System.out.println("ì¢Œì„ì„ ì„ íƒí•˜ì„¸ìš”(ì˜ˆ : E-9)");
-			System.out.println("ì²˜ìŒìœ¼ë¡œ ëŒì•„ê°€ë ¤ë©´ 'q'ë¥¼ ì…ë ¥í•˜ì„¸ìš”.");
+			System.out.println("ÁÂ¼®À» ¼±ÅÃÇÏ¼¼¿ä(¿¹ : E-9)");
+			System.out.println("Ã³À½À¸·Î µ¹¾Æ°¡·Á¸é 'q'¸¦ ÀÔ·ÂÇÏ¼¼¿ä.");
 			
 			Scanner sc = new Scanner(System.in);
 			
 			String seatSelect = sc.next();
 			String[] seatNo = seatSelect.split("-");
 			
-			int number = sc.nextInt(); //ìŠ¤íŠ¸ë§ìœ¼ë¡œ ë°›ì•„ì•¼í•˜ë„¤
+			int number = sc.nextInt(); //½ºÆ®¸µÀ¸·Î ¹Ş¾Æ¾ßÇÏ³×
 			
 						
 			if((number>=1 && number<=10) || number==-1)
 			{
 				if(number == -1)
 				{
-					System.out.println("ì¢…ë£Œë˜ì—ˆìŠµë‹ˆë‹¤.");
+					System.out.println("Á¾·áµÇ¾ú½À´Ï´Ù.");
 					break;
 				}
-				if(seat[number-1][number-1] !=1) //ì˜ˆì•½ë˜ì§€ ì•Šì€ ì¢Œì„ì˜ ê²½ìš°, ì–´ë–»ê²Œ í•´ì•¼í• ê¹Œ,,,
+				if(seat[number-1][number-1] !=1) //¿¹¾àµÇÁö ¾ÊÀº ÁÂ¼®ÀÇ °æ¿ì, ¾î¶»°Ô ÇØ¾ßÇÒ±î,,,
 				{
 					seat[number-1][number-1] = 1;
 				}
 				else
 				{
-					System.out.println("ì´ë¯¸ ì˜ˆì•½ëœ ìë¦¬ì…ë‹ˆë‹¤.");
+					System.out.println("ÀÌ¹Ì ¿¹¾àµÈ ÀÚ¸®ÀÔ´Ï´Ù.");
 				}
 			}
 		}
@@ -327,7 +384,7 @@ class Seats
 		{
 			for(j=0; j<seat[i].length; j++)
 			{
-				if((int)seat[i][j]==(int)'O') //ì¢Œì„ì´ ì „ë¶€ ì˜ˆì•½ë˜ë©´ trueë¥¼ ë¦¬í„´, ê·¸ëŸ°ë° ìš°ë¦¬ëŠ” OXë¡œ í• ê±°,,, ê·¸ë¦¬ê³  A,B,C
+				if((int)seat[i][j]==(int)'O') //ÁÂ¼®ÀÌ ÀüºÎ ¿¹¾àµÇ¸é true¸¦ ¸®ÅÏ, ±×·±µ¥ ¿ì¸®´Â OX·Î ÇÒ°Å,,, ±×¸®°í A,B,C
 				{
 					break;
 				}				
@@ -336,13 +393,13 @@ class Seats
 		if(i==seat.length && j==seat[i].length)
 		{
 			ret=true;
-		}//ê°™ì§€ ì•Šìœ¼ë©´?? ì—¬ê¸°ì— ì“°ë©´ ë˜ë‚˜?
+		}//°°Áö ¾ÊÀ¸¸é?? ¿©±â¿¡ ¾²¸é µÇ³ª?
 		return ret;
 	}
 }
 class Intro
 {
-	//ì˜í™” ë‚´ìš©ì„ ì†Œê°œí•˜ëŠ” í´ë˜ìŠ¤ //ì˜ˆë§¤ ì•ˆì— ì†Œê°œê°€ ë“¤ì–´ê°€ëŠ”ê²Œ ë” ì¢‹ì„ê²ƒ ê°™ì€ë°,,,
+	//¿µÈ­ ³»¿ëÀ» ¼Ò°³ÇÏ´Â Å¬·¡½º //¿¹¸Å ¾È¿¡ ¼Ò°³°¡ µé¾î°¡´Â°Ô ´õ ÁÁÀ»°Í °°Àºµ¥,,,
 
 	File file = new File("src/movie.txt");	
 	
@@ -359,32 +416,32 @@ class Intro
 		
 		while((str=br.readLine()) !=null)
 		{
-			System.out.println(str); // í™•ì¸ìš©, ìˆ¨ê¸°ê¸°
+			System.out.println(str); // È®ÀÎ¿ë, ¼û±â±â
 			String[] strArray = str.split(",");
 			
-			movie = new Movie(Integer.valueOf(strArray[0]),Integer.valueOf(strArray[1]),strArray[2],strArray[3]); //ì˜í™” ì†Œê°œíŒŒì¼ í˜•ì‹ì— ë§ê²Œ ë³€ê²½
+			movie = new Movie(Integer.valueOf(strArray[0]),Integer.valueOf(strArray[1]),strArray[2],strArray[3]); //¿µÈ­ ¼Ò°³ÆÄÀÏ Çü½Ä¿¡ ¸Â°Ô º¯°æ
 			al.add(movie);
 		}
 		br.close();
 		fr.close();
 		
-		System.out.println("ì •ë³´ë¥¼ í™•ì¸í•  ì˜í™”ë¥¼ ì„ íƒí•˜ì„¸ìš”");
+		System.out.println("Á¤º¸¸¦ È®ÀÎÇÒ ¿µÈ­¸¦ ¼±ÅÃÇÏ¼¼¿ä");
 		for(int i=0; i<al.size(); i++)
 		{
 			String name = al.get(i).getName();
-			System.out.print((i+1)+". "+name+" / "); //ì‚¬ìš©ìê°€ ì„ íƒí•  ìˆ˜ ìˆê²Œ ëª©ë¡ì„ í™”ë©´ì— ì¶œë ¥
+			System.out.print((i+1)+". "+name+" / "); //»ç¿ëÀÚ°¡ ¼±ÅÃÇÒ ¼ö ÀÖ°Ô ¸ñ·ÏÀ» È­¸é¿¡ Ãâ·Â
 		}
 		System.out.println();
 		System.out.println();
 		
 		Scanner sc = new Scanner(System.in);
-		no = sc.nextInt(); // ì‚¬ìš©ìê°€ ì…ë ¥í•œ ë„˜ë²„	
+		no = sc.nextInt(); // »ç¿ëÀÚ°¡ ÀÔ·ÂÇÑ ³Ñ¹ö	
 		
-		// ì‚¬ìš©ìê°€ ì„ íƒí•œ ë²ˆí˜¸ ë¶ˆëŸ¬ì˜¤ê¸°
+		// »ç¿ëÀÚ°¡ ¼±ÅÃÇÑ ¹øÈ£ ºÒ·¯¿À±â
 		for(int i=0; i<al.size(); i++) 
 		{
 			movie = al.get(i);
-			if(movie.getNo() == no) //ì‚¬ìš©ìê°€ ì…ë ¥í•œ ê°’ ëŒ€ì…
+			if(movie.getNo() == no) //»ç¿ëÀÚ°¡ ÀÔ·ÂÇÑ °ª ´ëÀÔ
 			{
 				mvname = movie.getName();
 				String path2 ="src/test/"+mvname+".txt";
@@ -397,7 +454,7 @@ class Intro
 			}
 		}		
 	}
-	//ì´ì „ í™”ë©´ìœ¼ë¡œ ëŒì•„ê°€ê¸°, ì˜ˆë§¤í•˜ê¸° ë‘ê°œì˜ ë©”ë‰´
+	//ÀÌÀü È­¸éÀ¸·Î µ¹¾Æ°¡±â, ¿¹¸ÅÇÏ±â µÎ°³ÀÇ ¸Ş´º
 	
 }
 class movieList
@@ -417,25 +474,25 @@ class movieList
 				
 		while((str=br.readLine()) !=null)
 		{
-			System.out.println(str); // í™•ì¸ìš©, ìˆ¨ê¸°ê¸°	
+			System.out.println(str); // È®ÀÎ¿ë, ¼û±â±â	
 			String[] strArray = str.split(",");
 			
-			movie = new Movie(Integer.valueOf(strArray[0]),Integer.valueOf(strArray[1]),strArray[2],strArray[3]); //ì˜í™” ì†Œê°œíŒŒì¼ í˜•ì‹ì— ë§ê²Œ ë³€ê²½
+			movie = new Movie(Integer.valueOf(strArray[0]),Integer.valueOf(strArray[1]),strArray[2],strArray[3]); //¿µÈ­ ¼Ò°³ÆÄÀÏ Çü½Ä¿¡ ¸Â°Ô º¯°æ
 			al.add(movie);
 		}
 		br.close();
 		fr.close();
 		
-		System.out.println("ì˜í™”ë¥¼ ì„ íƒí•˜ì„¸ìš”");
+		System.out.println("¿µÈ­¸¦ ¼±ÅÃÇÏ¼¼¿ä");
 		
 		Scanner sc = new Scanner(System.in);
-		no = sc.nextInt(); // ì‚¬ìš©ìê°€ ì…ë ¥í•œ ë„˜ë²„	
+		no = sc.nextInt(); // »ç¿ëÀÚ°¡ ÀÔ·ÂÇÑ ³Ñ¹ö	
 
-		// ì‚¬ìš©ìê°€ ì„ íƒí•œ ë²ˆí˜¸ ë¶ˆëŸ¬ì˜¤ê¸°
+		// »ç¿ëÀÚ°¡ ¼±ÅÃÇÑ ¹øÈ£ ºÒ·¯¿À±â
 		for(int i=0; i<al.size(); i++) 
 		{
 			movie = al.get(i);
-			if(movie.getNo() == no) //ì‚¬ìš©ìê°€ ì…ë ¥í•œ ê°’ ëŒ€ì…
+			if(movie.getNo() == no) //»ç¿ëÀÚ°¡ ÀÔ·ÂÇÑ °ª ´ëÀÔ
 			{
 				mvname = movie.getName();				
 			}
