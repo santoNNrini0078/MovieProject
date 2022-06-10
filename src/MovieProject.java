@@ -132,9 +132,36 @@ class AdminMenu extends AbstractMenu implements Menu //관리자메뉴 동작확
 }
 class AdminMovie	//영화 등록하기 클래스
 {
-	void FileRead()
+	Scanner sc=new Scanner(System.in);
+	AdminMenu am=new AdminMenu();
+	private String moviename;
+	private String moviegenre;
+	private int no;
+	private long stamp=System.currentTimeMillis();
+	private String str;
+	
+	void FileRead() throws IOException
 	{
+		FileWriter fw=new FileWriter("src/movietest/movielist.txt",true);
+		BufferedWriter bw=new BufferedWriter(fw);
 		
+		System.out.println("영화 제목을 입력해주세요.");
+		moviename=sc.nextLine();
+		System.out.println("영화 장르를 입력해주세요.");
+		moviegenre=sc.nextLine();
+		str=stamp+","+moviename+","+moviegenre;
+		
+		bw.write(str);
+		bw.write("\n");
+		
+		bw.close();
+		
+		System.out.println("++++++++++++++++++++++++++++++++++++++++");
+		System.out.println("영화 등록에 성공하였습니다. 관리자 메뉴로 돌아갑니다.");
+		System.out.println("++++++++++++++++++++++++++++++++++++++++");
+		System.out.println("\n");
+		
+		am.choose();
 	}
 }
 class MovieList		//영화 목록보기 클래스
