@@ -53,7 +53,7 @@ class MainMenu extends AbstractMenu implements Menu	//메인메뉴 동작확인 
 	{
 		System.out.println("1.영화 소개 / 2.영화 예매 / 3.예매 확인 / 4.예매 취소 / 5.관리자메뉴 / 6.종료");
 		System.out.println("메뉴를 선택하세요.");
-		String mvname="";
+		String name="";
 		boolean select = true;		
 		while(select)
 		{
@@ -63,13 +63,13 @@ class MainMenu extends AbstractMenu implements Menu	//메인메뉴 동작확인 
 					switch(menu) {				
 					case 1:
 						Intro intro = new Intro();
-						intro.IntroPrint(mvname);
+						intro.IntroPrint(name);
 						break;
 					case 2:
 						MovieList ml=new MovieList();
 						ml.movieListPrint();
 						Seats se = new Seats();
-						se.viewSeat(mvname);
+						se.viewSeat(ml.getName());
 						
 						break;
 					case 3:
@@ -543,8 +543,9 @@ class MovieList // 완료
 {
 	File file = new File("src/movie.txt");	
 	
-	String mvname;
+	private String name="";
 	int no;
+	boolean flag=true;
 	Movie movie=new Movie();
 	ArrayList<Movie> al = new ArrayList<Movie>();
 	
@@ -552,7 +553,7 @@ class MovieList // 완료
 	{
 		
 	}
-	String movieListPrint() throws IOException
+	void movieListPrint() throws IOException
 	{				
 		FileReader fr = new FileReader(file);
 		BufferedReader br = new BufferedReader(fr);
@@ -569,7 +570,8 @@ class MovieList // 완료
 		fr.close();				
 			
 		Scanner sc = new Scanner(System.in);
-		while(true)
+		
+		while(flag==true)
 		{				
 			System.out.println("영화를 선택하세요");
 			for(int i=0; i<al.size(); i++)
@@ -589,8 +591,10 @@ class MovieList // 완료
 						movie = al.get(i); // 사용자가 선택한 번호 불러오기
 						if(movie.getNo() == no) //사용자가 입력한 값 대입
 						{
-							mvname = movie.getName();
-							System.out.println(no+". "+mvname); //확인용
+							name = movie.getName();
+							System.out.println(no+". "+name+"를 선택하셨습니다.");
+							flag=false;
+							break;
 						}			
 					}
 				}
@@ -603,14 +607,13 @@ class MovieList // 완료
 			{
 				System.out.println("숫자만 입력하세요");
 				sc = new Scanner(System.in);
-			}			
-			return mvname;
-		}		
+			}	
+		}
 	}
-	public String getMvname() {
-		return mvname;
+	public String getName() {
+		return name;
 	}
-	public void setMvname(String mvname) {
-		this.mvname = mvname;
-	}
+	public void setName(String name) {
+		this.name = name;
+	}	
 }
