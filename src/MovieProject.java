@@ -54,7 +54,8 @@ class MainMenu extends AbstractMenu implements Menu	//메인메뉴 동작확인 
 		System.out.println("1.영화 소개 / 2.영화 예매 / 3.예매 확인 / 4.예매 취소 / 5.관리자메뉴 / 6.종료");
 		System.out.println("메뉴를 선택하세요.");
 		String name="";
-		boolean select = true;		
+		boolean select = true;	
+		MovieList ml=new MovieList();
 		while(select)
 		{
 			menu = sc.nextInt();
@@ -63,10 +64,9 @@ class MainMenu extends AbstractMenu implements Menu	//메인메뉴 동작확인 
 					switch(menu) {				
 					case 1:
 						Intro intro = new Intro();
-						intro.IntroPrint(name);
+						intro.IntroPrint(ml.getName());
 						break;
-					case 2:
-						MovieList ml=new MovieList();
+					case 2:						
 						ml.movieListPrint();
 						Seats se = new Seats();
 						se.viewSeat(ml.getName());
