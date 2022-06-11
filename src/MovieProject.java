@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -38,9 +39,9 @@ class MainMenu extends AbstractMenu implements Menu
 {	
 	//메인 메뉴의 출력과 입력에 따른 처리를 담당	
 	Scanner sc = new Scanner(System.in);
-	long reStamp=System.currentTimeMillis();
+	long reStamp;
 //	private int menu;
-	Reservation re;
+	Reservation re=new Reservation();
 	MainMenu()
 	{
 		
@@ -79,8 +80,10 @@ class MainMenu extends AbstractMenu implements Menu
 						//저장하기
 						break;
 					case 3:
+						re.confirm();
 						break;
 					case 4:
+						re.cancel();
 						break;
 					case 5:
 						AdminMenu am = new AdminMenu();
@@ -236,8 +239,11 @@ class Reservation// 예매 저장까지 완료
 	String name; 	
 	String seat;
 	MovieList ml=new MovieList();
+	File file = new File("src/reservation.txt");
+	Scanner sc=new Scanner(System.in);
 	
 	ArrayList<Movie> al = new ArrayList<Movie>();
+	ArrayList<Reservation> list = new ArrayList<Reservation>();
 	Reservation()
 	{
 
@@ -248,18 +254,13 @@ class Reservation// 예매 저장까지 완료
 		this.stamp=stamp;
 		this.name=name;
 		this.seat=seat;
-	}	
-	void print() throws IOException // 영화 목록 보여주기
-	{
-		ml.movieListPrint();		
 	}
 	void write(long stamp, String name, String seat) throws IOException //예매 정보 저장하기
 	{
 		this.seat=seat;
 		this.stamp=stamp;
 		this.name=name;
-//		System.out.println(name); //확인용
-		File file = new File("src/reservation.txt");
+
 		FileWriter fw = new FileWriter(file,true); //파일이 날아가지 않게 추가하기 (name,append)
 		BufferedWriter bw = new BufferedWriter(fw);
 		
@@ -269,15 +270,80 @@ class Reservation// 예매 저장까지 완료
 			file.createNewFile();
 		}		
 		reStamp=System.currentTimeMillis();		
-		bw.write(reStamp+","+stamp+","+name+","+seat+"\n"); //seat 정보 받아오기 어렵네
+		bw.write(reStamp+","+stamp+","+name+","+seat+"\n");
 		System.out.println("예약번호 : "+reStamp+" , 영화이름 : "+name+" , 좌석번호 : "+seat+" 으로 예약되었습니다.");
 		
 		bw.close();
 		fw.close();
 	}
-	void cancel()
+	int search(ArrayList<Reservation> list) throws IOException
 	{
+		int idx=-1;
+		Reservation re=null;
+		long num = sc.nextLong(); //확인하려는 영화의 예매번호 입력하기
+		String str;
+
+		FileReader fr = new FileReader(file);
+		BufferedReader br = new BufferedReader(fr);					
 		
+		while((str=br.readLine()) !=null)
+		{
+			String[] strArray = str.split(",");
+			
+			re = new Reservation(Long.valueOf(strArray[0]),Long.valueOf(strArray[1]),strArray[2],strArray[3]); //영화 소개파일 형식에 맞게 변경
+			list.add(re);
+		}		
+		br.close();
+		fr.close();
+		
+		for(int i=0; i<list.size(); i++)
+		{
+			re=list.get(i);
+			if(num==re.reStamp)
+			{
+				System.out.println("예매하신 영화는 "+re.getName()+", 좌석번호 : "+re.getSeat()+" 입니다.");
+				idx=i;
+				break;
+			}
+		}
+		if(idx==-1)
+		{
+			System.out.println("예매번호가 바르지 않습니다.");
+		}		
+		return idx;
+	}
+	void confirm() throws IOException //예매 확인하기
+	{		
+		System.out.println("확인하려는 영화의 예매번호를 입력하세요");
+		int idx =search(list);
+
+		MainMenu main = new MainMenu();
+		main.menuPrint();
+		main.choose();	
+	}
+	void cancel() throws IOException //예매 취소하기
+	{
+		System.out.println("취소하려는 영화의 예매번호를 입력하세요");
+		int idx =search(list);
+//		System.out.println(idx);
+		System.out.println("영화를 취소 하시겠습니까?");
+		System.out.println("1. 예매 취소 / 2. 처음으로 돌아가기");
+		int no = sc.nextInt();
+		MainMenu main = new MainMenu();
+		switch(no)
+		{			
+			case 1:
+				list.remove(idx); //리스트로 하면 이렇게 왜 취소가 안될까요,,, 아,,, 파일에 다시 써야하는구나.. 지우기만 하는 방법은 없나?
+				System.out.println("영화를 취소하였습니다.");
+				
+				main.menuPrint();
+				main.choose();
+				break;
+			case 2:				
+				main.menuPrint();
+				main.choose();
+				break;
+		}		
 	}
 	public String getName() {
 		return name;
@@ -299,7 +365,7 @@ class Seats
 {	
 	//예매 좌석을 관리하는 클래스, 좌석은 영화별로 다르게 저장되어야...
 	int[][] seat = new int[5][9];
-	int number=-2;	//예약이 끝난 좌석은 1, 빈 좌석은 0, 우리는 OX, -1입력시 종료는,,,
+	int number=-2;	//예약이 끝난 좌석은 1, 빈 좌석은 0, 우리는 OX
 	boolean isFull = false;
 	boolean flag=true;
 	String str;	
@@ -318,7 +384,6 @@ class Seats
 			
 			while((str=br.readLine()) !=null)
 			{
-//				System.out.println(str); // 확인용, 숨기기	
 				String[] strArray = str.split(",");
 				
 				re = new Reservation(Long.valueOf(strArray[0]),Long.valueOf(strArray[1]),strArray[2],strArray[3]); //영화 소개파일 형식에 맞게 변경
@@ -331,14 +396,13 @@ class Seats
 			System.out.println(e);
 		}				
 	}
-	void viewSeat(String name) //예매한 좌석번호를 배열로 변환하여 담아서 출력? //무비를 어디서 가져오나?
+	void viewSeat(String name) //예매한 좌석번호를 배열로 변환하여 담아서 출력
 	{		
 		System.out.println("=======================");
 		System.out.println("      S C R E E N      ");
 		System.out.println("=======================");
 		List<String> list = new ArrayList<String>();
 		
-//		System.out.println(name);///////숨기기
 		for(int i=0; i<al.size(); i++)
 		{
 			if(al.get(i).getName().equals(name)) //선택한 영화 이름과 예매 파일의 영화 이름이 같은 경우에
@@ -359,7 +423,7 @@ class Seats
 					}
 					else
 					{
-						System.out.print(" O");	//그렇지 않으면 O를 출력한다. //빈 자리에만 출력할 수 없나?
+						System.out.print(" O");	//그렇지 않으면 O를 출력한다.
 						seat[j][k]='O';
 					}													
 			}
@@ -374,7 +438,7 @@ class Seats
 		this.stamp=stamp;
 		Scanner sc = new Scanner(System.in);	
 		
-		while(!seatSelect.equals('q') || isFull ==false) //number가 아닌데,,,
+		while(!seatSelect.equals('q') || isFull ==false)
 		{
 			isFull = isFull(seat);
 			if(isFull)
@@ -431,7 +495,6 @@ class Seats
 								{
 									case 1:										
 										//seatSelect 값을 넣어서 예약으로 전달
-//										System.out.println(name); //확인용
 										re.write(stamp,name,seatSelect);
 										flag=false;
 										break;
@@ -441,15 +504,12 @@ class Seats
 									case 3:
 										MainMenu main = new MainMenu();
 										main.menuPrint();
-										break;//확인할것
-//									default:
-//										System.out.println("잘못 선택하셨습니다.");
-//										System.out.println("좌석을 선택하세요(예 : E-9)");
-//										break;
+										main.choose();
+										break;
 								}
 							}
 						}
-						catch(InputMismatchException e)
+						catch(InputMismatchException e) //idx=-1;로 하면 되나
 						{
 							System.out.println("잘못 선택하셨습니다.");
 							sc = new Scanner(System.in);
@@ -505,7 +565,6 @@ class Seats
 class Intro //완료
 {
 	File file = new File("src/movie.txt");	
-
 	Movie movie=new Movie();
 	Intro()
 	{
@@ -542,7 +601,6 @@ class Intro //완료
 		MainMenu main = new MainMenu();
 		main.choose();
 	}
-	//이전 화면으로 돌아가기, 예매하기 두개의 메뉴	
 }
 class MovieList // 완료
 {
@@ -597,7 +655,7 @@ class MovieList // 완료
 					stamp =movie.getStamp();
 					System.out.println(no+". "+name+"를 선택하셨습니다.");
 					flag=false;
-				//	break;								
+					break;								
 				}				
 				else
 				{
