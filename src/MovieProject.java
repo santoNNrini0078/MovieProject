@@ -227,11 +227,11 @@ class Movie
 		this.stamp = stamp;
 	}	
 }
-class Reservation extends Movie 
+class Reservation// 예매 저장까지 완료
 {
 	//예매 정보를 관리하는 클래스
 	//예매 파일 입출력을 담당
-	long reStamp=System.currentTimeMillis();
+	long reStamp;
 	long stamp;
 	String name; 	
 	String seat;
@@ -268,12 +268,17 @@ class Reservation extends Movie
 			System.out.println("파일을 생성합니다.");
 			file.createNewFile();
 		}		
-				
+		reStamp=System.currentTimeMillis();		
 		bw.write(reStamp+","+stamp+","+name+","+seat+"\n"); //seat 정보 받아오기 어렵네
+		System.out.println("예약번호 : "+reStamp+" , 영화이름 : "+name+" , 좌석번호 : "+seat+" 으로 예약되었습니다.");
 		
 		bw.close();
 		fw.close();
-	}		
+	}
+	void cancel()
+	{
+		
+	}
 	public String getName() {
 		return name;
 	}
@@ -288,7 +293,7 @@ class Reservation extends Movie
 
 	public void setSeat(String seat) {
 		this.seat = seat;
-	}	
+	}		
 }
 class Seats
 {	
