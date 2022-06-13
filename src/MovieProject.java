@@ -32,6 +32,7 @@ abstract class AbstractMenu implements Menu
 	//Menu 인터페이스를 구현하는 추상 클래스
 	//메인메뉴(MainMenu)와 관리자메뉴(AdminMenu)의 부모클래스	
 	public abstract void menuPrint();
+	public abstract void choose() throws IOException;
 }
 
 class MainMenu extends AbstractMenu implements Menu
@@ -50,7 +51,7 @@ class MainMenu extends AbstractMenu implements Menu
 		System.out.println("==========영화 예매 프로그램=========");
 		System.out.println("================================");			
 	}	
-	void choose() throws IOException
+	public void choose() throws IOException
 	{
 		System.out.println("1.영화 소개 / 2.영화 예매 / 3.예매 확인 / 4.예매 취소 / 5.관리자메뉴 / 6.종료");
 		System.out.println("메뉴를 선택하세요.");
