@@ -1,14 +1,10 @@
-package test5;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
@@ -69,46 +65,39 @@ class MainMenu extends AbstractMenu implements Menu
 			MovieList ml=new MovieList();
 						
 			try {
-				menu = sc.nextInt();
-				if(menu>0 && menu<7) {				
-					switch(menu) {				
-					case 1:
-						Intro intro = new Intro();
-						intro.IntroPrint(ml.getName());
-						break;
-					case 2:						
-						ml.movieListPrint();
-						Seats se=new Seats();
-						se.viewSeat(ml.getName());
-						se.choose(ml.getName(),ml.getStamp());
-						re = new Reservation(ml.getStamp(),reStamp,ml.getName(),se.getSeatSelect());
-						break;
-					case 3:
-						re.confirm();
-						break;
-					case 4:
-						re.cancel();
-						break;
-					case 5:
-						AdminMenu am = new AdminMenu();
-						am.menuPrint();   //관리자 메뉴 생성자와 메소드 실행
-						break;
-					case 6:
-						System.out.println("종료합니다.");
-						select = false;
-						break;				
-						}
-					}
-				else{
-					System.out.println("1~6 사이의 숫자를 입력하세요.");
-					
+				menu = sc.nextInt();							
+				switch(menu) {				
+				case 1:
+					Intro intro = new Intro();
+					intro.IntroPrint(ml.getName());
 					break;
+				case 2:						
+					ml.movieListPrint();
+					Seats se=new Seats();
+					se.viewSeat(ml.getName());
+					se.choose(ml.getName(),ml.getStamp());
+					re = new Reservation(ml.getStamp(),reStamp,ml.getName(),se.getSeatSelect());
+					break;
+				case 3:
+					re.confirm();
+					break;
+				case 4:
+					re.cancel();
+					break;
+				case 5:
+					AdminMenu am = new AdminMenu();
+					am.menuPrint();   //관리자 메뉴 생성자와 메소드 실행
+					break;
+				case 6:
+					System.out.println("종료합니다.");
+					System.exit(0);					
+				default:
+					System.out.println("1~6 사이의 숫자를 입력하세요.");					
 				}
 			}
 			catch(InputMismatchException e){
-				System.out.println("1~6사이의 숫자를 입력하세요.");
-				sc = new Scanner(System.in);
-				
+				System.out.println("1 ~ 6사이의 숫자를 입력하세요.");
+				sc = new Scanner(System.in);				
 				}
 			}			
 		}		
@@ -236,7 +225,7 @@ class Movie
 	}
 	public void setStamp(int stamp) {
 		this.stamp = stamp;
-	}	
+	}		
 }
 class Reservation implements Serializable// 예매 저장까지 완료
 {
@@ -246,6 +235,7 @@ class Reservation implements Serializable// 예매 저장까지 완료
 	long stamp;
 	String name; 	
 	String seat;
+	
 	MovieList ml=new MovieList();
 	File file = new File("src/reservation.txt");
 	Scanner sc=new Scanner(System.in);
@@ -264,8 +254,8 @@ class Reservation implements Serializable// 예매 저장까지 완료
 		this.seat=seat;
 	}
 	@Override
-	public String toString() {
-		return reStamp+","+ stamp+","+name+","+seat;
+	public String toString() {		
+		return reStamp+","+ stamp+","+name+","+seat;		
 	}
 	void write(long stamp, String name, String seat) throws IOException //예매 정보 저장하기
 	{
@@ -340,42 +330,51 @@ class Reservation implements Serializable// 예매 저장까지 완료
 	{
 		System.out.println("취소하려는 영화의 예매번호를 입력하세요");
 		int idx =search(list);
-//		System.out.println(idx);
 		System.out.println("영화를 취소 하시겠습니까?");
 		System.out.println("1. 예매 취소 / 2. 처음으로 돌아가기");
-		int no = sc.nextInt();
+		
 		MainMenu main = new MainMenu();
 		String str="";
-		switch(no)
-		{			
-			case 1:
-				list.remove(idx); //리스트로 하면 이렇게 왜 취소가 안될까요,,, 아,,, 파일에 다시 써야하는구나.. 지우기만 하는 방법은 없나?
-				
-				FileWriter fw = new FileWriter(file);
-				BufferedWriter bw = new BufferedWriter(fw);									
-			
-				for(int i=0; i<list.size(); i++)
-				{
-					Reservation re = list.get(i);					
-					bw.write(re.toString()+"\n");
+		while(true)
+		{
+			try {
+				int no = sc.nextInt();
+				switch(no)
+				{			
+					case 1:
+						list.remove(idx); //리스트로 하면 이렇게 왜 취소가 안될까요,,, 아,,, 파일에 다시 써야하는구나.. 지우기만 하는 방법은 없나?
+						
+						FileWriter fw = new FileWriter(file);
+						BufferedWriter bw = new BufferedWriter(fw);									
+					
+						for(int i=0; i<list.size(); i++)
+						{
+							Reservation re = list.get(i);					
+							bw.write(re.toString()+"\n");
+						}	
+																		
+						bw.close();
+						fw.close();			
+					
+						System.out.println("영화를 취소하였습니다.");
+						main.menuPrint();
+						main.choose();
+						break;
+					case 2:				
+						main.menuPrint();
+						main.choose();
+						break;
+					default :
+						System.out.println("잘못 입력하셨습니다.");
+						System.out.println("다시 입력해 주세요.");
+						break;
 				}	
-																
-				bw.close();
-				fw.close();			
-			
-				System.out.println("영화를 취소하였습니다.");
-				main.menuPrint();
-				main.choose();
-				break;
-			case 2:				
-				main.menuPrint();
-				main.choose();
-				break;
-			default :
-				System.out.println("잘못 입력하셨습니다.");				
-				main.choose();	
-				break;
-		}		
+			}
+			catch(InputMismatchException e) {
+				System.out.println("1~2 중에서 선택하세요.");
+				sc = new Scanner(System.in);
+			}
+		}			
 	}
 	public String getName() {
 		return name;
@@ -397,7 +396,7 @@ class Seats
 {	
 	//예매 좌석을 관리하는 클래스, 좌석은 영화별로 다르게 저장되어야...
 	int[][] seat = new int[5][9];
-	int number=-2;	//예약이 끝난 좌석은 1, 빈 좌석은 0, 우리는 OX
+	int number=-2;	//예약이 끝난 좌석은 X, 빈 좌석은 0
 	boolean isFull = false;
 	boolean flag=true;
 	String str;	
@@ -408,7 +407,7 @@ class Seats
 	long stamp;
 		
 	ArrayList<Reservation> al = new ArrayList<Reservation>();
-	Seats(){ //String name??
+	Seats(){ //파일을 읽어서 어레이 리스트에 저장
 		try {
 			File file = new File("src/reservation.txt");
 			
@@ -434,7 +433,7 @@ class Seats
 			System.out.println(e);
 		}				
 	}
-	void viewSeat(String name) //예매한 좌석번호를 배열로 변환하여 담아서 출력
+	void viewSeat(String name) //선택한 영화의 좌석번호를 배열로 변환하여 담아서 출력
 	{		
 		System.out.println("=======================");
 		System.out.println("      S C R E E N      ");
@@ -446,8 +445,8 @@ class Seats
 			if(al.get(i).getName().equals(name)) //선택한 영화 이름과 예매 파일의 영화 이름이 같은 경우에
 			{
 				String sNo = al.get(i).getSeat(); //해당 영화의 예매된 좌석 번호를 불러온다.				
-				list.add(sNo); //예매 좌석들을 배열에 저장
-			}// 사용자가 입력 범위를 벗어나면 제대로 입력하라고 알려주기			
+				list.add(sNo); //예매된 좌석들을 배열에 저장
+			}		
 		}
 		for(int j=0; j<seat.length; j++)
 		{
@@ -485,7 +484,7 @@ class Seats
 				MainMenu main = new MainMenu();
 				main.menuPrint();
 			}			
-			System.out.println("좌석을 선택하세요(예 : E-9)"); //가운데 - 하이픈은 아무거나 입력해도 상관없다?
+			System.out.println("좌석을 선택하세요(예 : E-9)"); //가운데 - 하이픈은 어떻게 강제하지?
 			System.out.println("처음으로 돌아가려면 'q'를 입력하세요.");
 			
 			seatSelect = sc.next();
@@ -508,6 +507,8 @@ class Seats
 			char d = seatSelect.charAt(2);//숫자가 넘어가면,,,10입력시
 			int b=(int)d-49;
 			
+			char f = seatSelect.charAt(1);			
+			
 			if(a>5 && a<=0)
 			{
 				System.out.println("잘못 선택하셨습니다.");
@@ -515,7 +516,7 @@ class Seats
 				choose(name,stamp);
 			}
 			
-			if((a<5 && a>=0) && (b>=0 && b<10))
+			if((a<5 && a>=0) && (b>=0 && b<10) && (f=='-'))
 			{				
 				if(seat[a][b] !='X')
 				{
@@ -565,8 +566,7 @@ class Seats
 			else
 			{
 				System.out.println("잘못 선택하셨습니다.");
-				System.out.println("A~E 사이에서 선택하세요.");
-				
+				System.out.println("A~E 사이에서 선택하세요.");				
 			}
 		}		
 	}
@@ -597,7 +597,7 @@ class Seats
 				}
 			}			
 		}		
-		if((i)==5 && (j)==8) //for문을 돌고 난 후의 i, j 값이 seat 배열의 길이와 같으면(배열을 전부 돌았다면) true 반환 j=8까지만??
+		if((i)==5 && (j)==8) //for문을 돌고 난 후의 i, j 값이 seat 배열의 길이와 같으면(배열을 전부 돌았다면) true 반환 j=8일때 마지막 좌석이 break 되므로 1이 증가하지 않는다.
 		{
 			ret=true;
 		}
