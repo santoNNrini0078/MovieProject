@@ -4,9 +4,12 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -235,7 +238,7 @@ class Movie
 		this.stamp = stamp;
 	}	
 }
-class Reservation// 예매 저장까지 완료
+class Reservation implements Serializable// 예매 저장까지 완료
 {
 	//예매 정보를 관리하는 클래스
 	//예매 파일 입출력을 담당
@@ -338,12 +341,25 @@ class Reservation// 예매 저장까지 완료
 		System.out.println("1. 예매 취소 / 2. 처음으로 돌아가기");
 		int no = sc.nextInt();
 		MainMenu main = new MainMenu();
+		String str="";
 		switch(no)
 		{			
 			case 1:
 				list.remove(idx); //리스트로 하면 이렇게 왜 취소가 안될까요,,, 아,,, 파일에 다시 써야하는구나.. 지우기만 하는 방법은 없나?
-				System.out.println("영화를 취소하였습니다.");
 				
+				FileWriter fw = new FileWriter(file);
+				BufferedWriter bw = new BufferedWriter(fw);									
+			
+				for(int i=0; i<list.size(); i++)
+				{
+					Reservation re = list.get(i);					
+					bw.write(re.reStamp+","+re.stamp+","+re.name+","+re.seat+"\n");
+				}	
+																
+				bw.close();
+				fw.close();			
+			
+				System.out.println("영화를 취소하였습니다.");
 				main.menuPrint();
 				main.choose();
 				break;
@@ -391,18 +407,24 @@ class Seats
 	Seats(){ //String name??
 		try {
 			File file = new File("src/reservation.txt");
-			FileReader fr = new FileReader(file);
-			BufferedReader br = new BufferedReader(fr);					
 			
-			while((str=br.readLine()) !=null)
+			if (file.exists())
+			
 			{
-				String[] strArray = str.split(",");
+				FileReader fr = new FileReader(file);
+				BufferedReader br = new BufferedReader(fr);								
 				
-				re = new Reservation(Long.valueOf(strArray[0]),Long.valueOf(strArray[1]),strArray[2],strArray[3]); //영화 소개파일 형식에 맞게 변경
-				al.add(re);
-			}		
-			br.close();
-			fr.close();
+				while((str=br.readLine()) !=null)
+				{
+					String[] strArray = str.split(",");
+					
+					re = new Reservation(Long.valueOf(strArray[0]),Long.valueOf(strArray[1]),strArray[2],strArray[3]); //영화 소개파일 형식에 맞게 변경
+					al.add(re);
+				}		
+				br.close();
+				fr.close();
+			
+			}//else {파일이 존재하지 않으면 	읽지 않고 다음으로 넘어간다.}
 		}
 		catch(Exception e) {
 			System.out.println(e);
@@ -498,28 +520,37 @@ class Seats
 					{
 						System.out.println("예약하시겠습니까?");
 						System.out.println("1.예약하기 2.다시 선택하기 3.처음으로 돌아가기");
-						
-						int yn = sc.nextInt();
-						switch(yn)
+												
+						try
+						{
+							int yn = sc.nextInt();
+							switch(yn)
 							{
 								case 1:										
 									//seatSelect 값을 넣어서 예약으로 전달
-									re.write(stamp,name,seatSelect);
-									flag=false;
-									break;
+									Reservation re2 = new Reservation();
+									re2.write(stamp,name,seatSelect);									
+									MainMenu main = new MainMenu();
+									main.menuPrint();
+									main.choose();
 								case 2:
 									choose(name,stamp);
 									break;								
 								case 3:
-									MainMenu main = new MainMenu();
-									main.menuPrint();
-									main.choose();
+									MainMenu main2 = new MainMenu();
+									main2.menuPrint();
+									main2.choose();
 									break;
 								default:
 									System.out.println("잘못 입력하셨습니다.");
 									sc = new Scanner(System.in);
 									break;
-							}										
+							}	
+						}
+						catch(InputMismatchException e){
+								System.out.println("숫자를 입력하세요");
+								sc = new Scanner(System.in);
+						}									
 					}						
 				}
 				else
@@ -530,7 +561,8 @@ class Seats
 			else
 			{
 				System.out.println("잘못 선택하셨습니다.");
-				System.out.println("A~E 사이에서 선택하세요.");				
+				System.out.println("A~E 사이에서 선택하세요.");
+				
 			}
 		}		
 	}
