@@ -1,3 +1,5 @@
+package test5;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -75,9 +77,8 @@ class MainMenu extends AbstractMenu implements Menu
 						ml.movieListPrint();
 						Seats se=new Seats();
 						se.viewSeat(ml.getName());
-						se.choose(ml.getName(),ml.getStamp()); //좌석 널
+						se.choose(ml.getName(),ml.getStamp());
 						re = new Reservation(ml.getStamp(),reStamp,ml.getName(),se.getSeatSelect());
-						//저장하기
 						break;
 					case 3:
 						re.confirm();
@@ -97,10 +98,14 @@ class MainMenu extends AbstractMenu implements Menu
 					}
 				else{
 					System.out.println("1~6 사이의 숫자를 입력하세요.");
+					
+					break;
 				}
 			}
 			catch(InputMismatchException e){
 				System.out.println("1~6사이의 숫자를 입력하세요.");
+				sc = new Scanner(System.in);
+				
 				}
 			}			
 		}		
@@ -309,6 +314,9 @@ class Reservation// 예매 저장까지 완료
 		if(idx==-1)
 		{
 			System.out.println("예매번호가 바르지 않습니다.");
+
+			MainMenu main = new MainMenu();
+			main.choose();	
 		}		
 		return idx;
 	}
@@ -342,6 +350,10 @@ class Reservation// 예매 저장까지 완료
 			case 2:				
 				main.menuPrint();
 				main.choose();
+				break;
+			default :
+				System.out.println("잘못 입력하셨습니다.");				
+				main.choose();	
 				break;
 		}		
 	}
@@ -447,7 +459,7 @@ class Seats
 				MainMenu main = new MainMenu();
 				main.menuPrint();
 			}			
-			System.out.println("좌석을 선택하세요(예 : E-9)");
+			System.out.println("좌석을 선택하세요(예 : E-9)"); //가운데 - 하이픈은 아무거나 입력해도 상관없다?
 			System.out.println("처음으로 돌아가려면 'q'를 입력하세요.");
 			
 			seatSelect = sc.next();
@@ -486,34 +498,28 @@ class Seats
 					{
 						System.out.println("예약하시겠습니까?");
 						System.out.println("1.예약하기 2.다시 선택하기 3.처음으로 돌아가기");
-						try
-						{
-							int yn = sc.nextInt();
-							if(yn<4||yn>0)
+						
+						int yn = sc.nextInt();
+						switch(yn)
 							{
-								switch(yn)
-								{
-									case 1:										
-										//seatSelect 값을 넣어서 예약으로 전달
-										re.write(stamp,name,seatSelect);
-										flag=false;
-										break;
-									case 2:
-										choose(name,stamp);
-										break;								
-									case 3:
-										MainMenu main = new MainMenu();
-										main.menuPrint();
-										main.choose();
-										break;
-								}
-							}
-						}
-						catch(InputMismatchException e) //idx=-1;로 하면 되나
-						{
-							System.out.println("잘못 선택하셨습니다.");
-							sc = new Scanner(System.in);
-						}						
+								case 1:										
+									//seatSelect 값을 넣어서 예약으로 전달
+									re.write(stamp,name,seatSelect);
+									flag=false;
+									break;
+								case 2:
+									choose(name,stamp);
+									break;								
+								case 3:
+									MainMenu main = new MainMenu();
+									main.menuPrint();
+									main.choose();
+									break;
+								default:
+									System.out.println("잘못 입력하셨습니다.");
+									sc = new Scanner(System.in);
+									break;
+							}										
 					}						
 				}
 				else
