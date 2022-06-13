@@ -263,6 +263,10 @@ class Reservation implements Serializable// 예매 저장까지 완료
 		this.name=name;
 		this.seat=seat;
 	}
+	@Override
+	public String toString() {
+		return reStamp+","+ stamp+","+name+","+seat;
+	}
 	void write(long stamp, String name, String seat) throws IOException //예매 정보 저장하기
 	{
 		this.seat=seat;
@@ -353,7 +357,7 @@ class Reservation implements Serializable// 예매 저장까지 완료
 				for(int i=0; i<list.size(); i++)
 				{
 					Reservation re = list.get(i);					
-					bw.write(re.reStamp+","+re.stamp+","+re.name+","+re.seat+"\n");
+					bw.write(re.toString()+"\n");
 				}	
 																
 				bw.close();
