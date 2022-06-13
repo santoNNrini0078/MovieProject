@@ -26,6 +26,7 @@ interface Menu
 {
 	//화면 출력과 이동을 통해 프로그램이 동작하게끔 유도	
 	void menuPrint(); //메뉴를 화면에 출력
+	void choose() throws IOException;
 }
 abstract class AbstractMenu implements Menu
 {
