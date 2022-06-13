@@ -26,14 +26,12 @@ interface Menu
 {
 	//화면 출력과 이동을 통해 프로그램이 동작하게끔 유도	
 	void menuPrint(); //메뉴를 화면에 출력
-//	void choose();	//사용자가 메뉴를 고르면 동작
 }
 abstract class AbstractMenu implements Menu
 {
 	//Menu 인터페이스를 구현하는 추상 클래스
 	//메인메뉴(MainMenu)와 관리자메뉴(AdminMenu)의 부모클래스	
 	public abstract void menuPrint();
-//	public abstract void choose();
 }
 
 class MainMenu extends AbstractMenu implements Menu
@@ -41,7 +39,6 @@ class MainMenu extends AbstractMenu implements Menu
 	//메인 메뉴의 출력과 입력에 따른 처리를 담당	
 	Scanner sc = new Scanner(System.in);
 	long reStamp;
-//	private int menu;
 	Reservation re=new Reservation();
 	MainMenu()
 	{
@@ -438,8 +435,8 @@ class Seats
 		System.out.println("=======================");
 		System.out.println("      S C R E E N      ");
 		System.out.println("=======================");
-		List<String> list = new ArrayList<String>();
 		
+		List<String> list = new ArrayList<String>();		
 		for(int i=0; i<al.size(); i++)
 		{
 			if(al.get(i).getName().equals(name)) //선택한 영화 이름과 예매 파일의 영화 이름이 같은 경우에
