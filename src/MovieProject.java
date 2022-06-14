@@ -25,7 +25,7 @@ public class MainApp {
 interface Menu
 {
 	//화면 출력과 이동을 통해 프로그램이 동작하게끔 유도	
-	void menuPrint(); //메뉴를 화면에 출력
+	void menuPrint() throws IOException; //메뉴를 화면에 출력
 	void choose() throws IOException;
 }
 abstract class AbstractMenu implements Menu
@@ -105,7 +105,7 @@ class AdminMenu extends AbstractMenu implements Menu //관리자메뉴 동작확
 {
 	//관리자 메뉴의 출력과 입력에 따른 처리를 담당
 	Scanner sc=new Scanner(System.in);
-	public void menuPrint()
+	public void menuPrint() throws IOException
 	{
 		System.out.println("관리자 메뉴입니다. 비밀번호를 입력해주세요.");
 		int passwd=1234;
@@ -123,7 +123,7 @@ class AdminMenu extends AbstractMenu implements Menu //관리자메뉴 동작확
 			}
 		}
 	}
-	public void choose()
+	public void choose() throws IOException
 	{
 		while(true)
 		{
@@ -134,12 +134,15 @@ class AdminMenu extends AbstractMenu implements Menu //관리자메뉴 동작확
 			{
 				case 1:
 					AdminMovie am=new AdminMovie();
+					am.FileRead();
 					break;
 				case 2:
-					MovieList ml=new MovieList();
+					AdminList ml=new AdminList();
+					ml.list();
 					break;
 				case 3:
 					MovieRemove mr=new MovieRemove();
+					mr.remove();
 					break;
 				case 4:
 					MainMenu mm=new MainMenu();
@@ -162,21 +165,22 @@ class AdminMovie	//영화 등록하기 클래스
 	private long stamp=System.currentTimeMillis();
 	private String str;
 	
-	void FileRead() throws IOException
+	public void FileRead() throws IOException
 	{
-		FileWriter fw=new FileWriter("src/movietest/movielist.txt",true);
+		FileWriter fw=new FileWriter("src/movielist/movielist.txt",true);
 		BufferedWriter bw=new BufferedWriter(fw);
 		
 		System.out.println("영화 제목을 입력해주세요.");
 		moviename=sc.nextLine();
 		System.out.println("영화 장르를 입력해주세요.");
 		moviegenre=sc.nextLine();
-		str=stamp+","+moviename+","+moviegenre;
+		str=stamp+", "+moviename+", "+moviegenre;
 		
 		bw.write(str);
 		bw.write("\n");
 		
 		bw.close();
+		fw.close();
 		
 		System.out.println("++++++++++++++++++++++++++++++++++++++++");
 		System.out.println("영화 등록에 성공하였습니다. 관리자 메뉴로 돌아갑니다.");
@@ -186,9 +190,108 @@ class AdminMovie	//영화 등록하기 클래스
 		am.choose();
 	}
 }
-class MovieRemove
+class AdminList		//영화 목록보기 클래스
 {
+	private String str;
 	
+	void list() throws IOException
+	{
+		Movie movie=new Movie();
+		FileReader fr=new FileReader("src/movielist/movielist.txt");
+		BufferedReader br=new BufferedReader(fr);
+		
+		String name;
+		long stamp;
+		int no;
+		boolean flag=true;
+		
+		Scanner sc=new Scanner(System.in);
+		
+		ArrayList<Movie> al=new ArrayList<Movie>();
+		
+		while( (str=br.readLine() )!=null)
+		{
+			String[] strArray = str.split(",");
+			
+			movie = new Movie(Long.valueOf(strArray[0]),strArray[1],strArray[2]);
+			al.add(movie);
+			
+			System.out.println(str);
+		}
+		br.close();
+		fr.close();
+		System.out.println("#######현재 등록된 영화 목록입니다.#######");
+		for(int i=0;i<al.size();i++) 
+		{
+			System.out.println((i+1)+". "+al.get(i).getName());
+		}
+		
+	}
+}
+class MovieRemove	//영화 삭제하기 클래스
+{
+	private String str;
+	private String res;
+	private int num;
+	Scanner sc=new Scanner(System.in);
+	
+	void remove() throws IOException
+	{
+		Movie movie=new Movie();
+		
+		FileReader fr=new FileReader("src/movielist/movielist.txt");
+		BufferedReader br=new BufferedReader(fr);
+		
+		ArrayList<Movie> al=new ArrayList<Movie>();
+		
+		while( (str=br.readLine() )!=null)
+		{
+			String[] strArray = str.split(",");
+			
+			movie = new Movie(Long.valueOf(strArray[0]),strArray[1],strArray[2]);
+			al.add(movie);
+			
+		}
+		br.close();
+		fr.close();
+		
+		AdminMenu am=new AdminMenu();
+		
+		for(int i=0;i<al.size();i++)
+		{
+			System.out.print((i+1)+". "+al.get(i).getName()+" / ");
+		}
+		System.out.println();
+		
+		System.out.println("===================================");
+		System.out.println("삭제할 영화 번호를 눌러주세요. ");
+		
+		num=sc.nextInt();
+
+		
+		System.out.println(al.get(num-1).getName()+"를 선택하셨습니다");
+		al.remove(num-1);
+		
+		System.out.println("삭제를 성공하였습니다!!!!!!!!!!!!!!!!");
+		System.out.println("------------------------------");
+		
+		FileWriter fw=new FileWriter("src/movietest/movielist.txt");
+		BufferedWriter bw=new BufferedWriter(fw);
+		
+		for(int j=0;j<al.size();j++)
+		{
+			Movie m=al.get(j);
+			System.out.println(m.toString());
+			bw.write(m.toString());
+			bw.write("\n");
+		}
+		bw.close();
+		fw.close();
+		
+		System.out.println("관리자메뉴로 돌아갑니다.");
+		
+		am.choose();
+	}
 }
 class Movie
 {
@@ -224,7 +327,10 @@ class Movie
 	}
 	public void setStamp(int stamp) {
 		this.stamp = stamp;
-	}		
+	}
+	public String toString() {
+		return stamp + ", " + name + ", " + genre;
+	}
 }
 class Reservation implements Serializable// 예매 저장까지 완료
 {
