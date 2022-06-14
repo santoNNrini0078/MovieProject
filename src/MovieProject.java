@@ -105,14 +105,14 @@ class AdminMenu extends AbstractMenu implements Menu //관리자메뉴 동작확
 {
 	//관리자 메뉴의 출력과 입력에 따른 처리를 담당
 	Scanner sc=new Scanner(System.in);
-	public void menuPrint() throws IOException
+	public void menuPrint() throws IOException 
 	{
 		System.out.println("관리자 메뉴입니다. 비밀번호를 입력해주세요.");
-		int passwd=1234;
+		String passwd="1234";
 		while(true)
 		{
-			int adpass=sc.nextInt();
-			if(passwd==adpass)
+			String adpass=sc.nextLine();
+			if(passwd.equals(adpass))
 			{
 				System.out.println("인증에 성공하였습니다.");
 				choose();
@@ -129,28 +129,33 @@ class AdminMenu extends AbstractMenu implements Menu //관리자메뉴 동작확
 		{
 			System.out.println("1.영화 등록하기 / 2.영화 목록보기 / 3.영화 삭제하기 / 4.메인메뉴로 이동하기");
 			System.out.println("메뉴를 선택해주세요.");
-			int num=sc.nextInt();
-			switch(num)
-			{
-				case 1:
-					AdminMovie am=new AdminMovie();
-					am.FileRead();
-					break;
-				case 2:
-					AdminList ml=new AdminList();
-					ml.list();
-					break;
-				case 3:
-					MovieRemove mr=new MovieRemove();
-					mr.remove();
-					break;
-				case 4:
-					MainMenu mm=new MainMenu();
-					mm.menuPrint();
-					break;
-				default:
-					System.out.println("1~4번 중에 다시 입력해주세요.");
-					break;
+			try {
+				int num=sc.nextInt();
+				switch(num)
+				{
+					case 1:
+						AdminMovie am=new AdminMovie();
+						am.FileRead();
+						break;
+					case 2:
+						AdminList ml=new AdminList();
+						ml.list();
+						break;
+					case 3:
+						MovieRemove mr=new MovieRemove();
+						mr.remove();
+						break;
+					case 4:
+						MainMenu mm=new MainMenu();
+						mm.menuPrint();
+						mm.choose();
+						break;
+					default:
+						System.out.println("1~4번 중에 다시 입력해주세요.");
+				}
+			}catch(InputMismatchException e){
+				System.out.println("1~4번 중에 다시 입력해주세요.");
+				sc = new Scanner(System.in);				
 			}
 		}
 	}
