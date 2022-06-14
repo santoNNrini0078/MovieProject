@@ -280,7 +280,7 @@ class MovieRemove	//영화 삭제하기 클래스
 		System.out.println("삭제를 성공하였습니다!!!!!!!!!!!!!!!!");
 		System.out.println("------------------------------");
 		
-		FileWriter fw=new FileWriter("src/movietest/movielist.txt");
+		FileWriter fw=new FileWriter("src/movielist/movielist.txt");
 		BufferedWriter bw=new BufferedWriter(fw);
 		
 		for(int j=0;j<al.size();j++)
