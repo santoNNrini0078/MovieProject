@@ -25,7 +25,7 @@ public class MainApp {
 interface Menu
 {
 	//화면 출력과 이동을 통해 프로그램이 동작하게끔 유도	
-	void menuPrint() throws IOException; //메뉴를 화면에 출력
+	void menuPrint(); //메뉴를 화면에 출력
 	void choose() throws IOException;
 }
 abstract class AbstractMenu implements Menu
@@ -105,14 +105,14 @@ class AdminMenu extends AbstractMenu implements Menu //관리자메뉴 동작확
 {
 	//관리자 메뉴의 출력과 입력에 따른 처리를 담당
 	Scanner sc=new Scanner(System.in);
-	public void menuPrint() throws IOException 
+	public void menuPrint()
 	{
 		System.out.println("관리자 메뉴입니다. 비밀번호를 입력해주세요.");
-		String passwd="1234";
+		int passwd=1234;
 		while(true)
 		{
-			String adpass=sc.nextLine();
-			if(passwd.equals(adpass))
+			int adpass=sc.nextInt();
+			if(passwd==adpass)
 			{
 				System.out.println("인증에 성공하였습니다.");
 				choose();
@@ -123,39 +123,31 @@ class AdminMenu extends AbstractMenu implements Menu //관리자메뉴 동작확
 			}
 		}
 	}
-	public void choose() throws IOException
+	public void choose()
 	{
 		while(true)
 		{
 			System.out.println("1.영화 등록하기 / 2.영화 목록보기 / 3.영화 삭제하기 / 4.메인메뉴로 이동하기");
 			System.out.println("메뉴를 선택해주세요.");
-			try {
-				int num=sc.nextInt();
-				switch(num)
-				{
-					case 1:
-						AdminMovie am=new AdminMovie();
-						am.FileRead();
-						break;
-					case 2:
-						AdminList ml=new AdminList();
-						ml.list();
-						break;
-					case 3:
-						MovieRemove mr=new MovieRemove();
-						mr.remove();
-						break;
-					case 4:
-						MainMenu mm=new MainMenu();
-						mm.menuPrint();
-						mm.choose();
-						break;
-					default:
-						System.out.println("1~4번 중에 다시 입력해주세요.");
-				}
-			}catch(InputMismatchException e){
-				System.out.println("1~4번 중에 다시 입력해주세요.");
-				sc = new Scanner(System.in);				
+			int num=sc.nextInt();
+			switch(num)
+			{
+				case 1:
+					AdminMovie am=new AdminMovie();
+					break;
+				case 2:
+					MovieList ml=new MovieList();
+					break;
+				case 3:
+					MovieRemove mr=new MovieRemove();
+					break;
+				case 4:
+					MainMenu mm=new MainMenu();
+					mm.menuPrint();
+					break;
+				default:
+					System.out.println("1~4번 중에 다시 입력해주세요.");
+					break;
 			}
 		}
 	}
@@ -170,22 +162,21 @@ class AdminMovie	//영화 등록하기 클래스
 	private long stamp=System.currentTimeMillis();
 	private String str;
 	
-	public void FileRead() throws IOException
+	void FileRead() throws IOException
 	{
-		FileWriter fw=new FileWriter("src/movielist/movielist.txt",true);
+		FileWriter fw=new FileWriter("src/movietest/movielist.txt",true);
 		BufferedWriter bw=new BufferedWriter(fw);
 		
 		System.out.println("영화 제목을 입력해주세요.");
 		moviename=sc.nextLine();
 		System.out.println("영화 장르를 입력해주세요.");
 		moviegenre=sc.nextLine();
-		str=stamp+", "+moviename+", "+moviegenre;
+		str=stamp+","+moviename+","+moviegenre;
 		
 		bw.write(str);
 		bw.write("\n");
 		
 		bw.close();
-		fw.close();
 		
 		System.out.println("++++++++++++++++++++++++++++++++++++++++");
 		System.out.println("영화 등록에 성공하였습니다. 관리자 메뉴로 돌아갑니다.");
@@ -195,108 +186,9 @@ class AdminMovie	//영화 등록하기 클래스
 		am.choose();
 	}
 }
-class AdminList		//영화 목록보기 클래스
+class MovieRemove
 {
-	private String str;
 	
-	void list() throws IOException
-	{
-		Movie movie=new Movie();
-		FileReader fr=new FileReader("src/movielist/movielist.txt");
-		BufferedReader br=new BufferedReader(fr);
-		
-		String name;
-		long stamp;
-		int no;
-		boolean flag=true;
-		
-		Scanner sc=new Scanner(System.in);
-		
-		ArrayList<Movie> al=new ArrayList<Movie>();
-		
-		while( (str=br.readLine() )!=null)
-		{
-			String[] strArray = str.split(",");
-			
-			movie = new Movie(Long.valueOf(strArray[0]),strArray[1],strArray[2]);
-			al.add(movie);
-			
-			System.out.println(str);
-		}
-		br.close();
-		fr.close();
-		System.out.println("#######현재 등록된 영화 목록입니다.#######");
-		for(int i=0;i<al.size();i++) 
-		{
-			System.out.println((i+1)+". "+al.get(i).getName());
-		}
-		
-	}
-}
-class MovieRemove	//영화 삭제하기 클래스
-{
-	private String str;
-	private String res;
-	private int num;
-	Scanner sc=new Scanner(System.in);
-	
-	void remove() throws IOException
-	{
-		Movie movie=new Movie();
-		
-		FileReader fr=new FileReader("src/movielist/movielist.txt");
-		BufferedReader br=new BufferedReader(fr);
-		
-		ArrayList<Movie> al=new ArrayList<Movie>();
-		
-		while( (str=br.readLine() )!=null)
-		{
-			String[] strArray = str.split(",");
-			
-			movie = new Movie(Long.valueOf(strArray[0]),strArray[1],strArray[2]);
-			al.add(movie);
-			
-		}
-		br.close();
-		fr.close();
-		
-		AdminMenu am=new AdminMenu();
-		
-		for(int i=0;i<al.size();i++)
-		{
-			System.out.print((i+1)+". "+al.get(i).getName()+" / ");
-		}
-		System.out.println();
-		
-		System.out.println("===================================");
-		System.out.println("삭제할 영화 번호를 눌러주세요. ");
-		
-		num=sc.nextInt();
-
-		
-		System.out.println(al.get(num-1).getName()+"를 선택하셨습니다");
-		al.remove(num-1);
-		
-		System.out.println("삭제를 성공하였습니다!!!!!!!!!!!!!!!!");
-		System.out.println("------------------------------");
-		
-		FileWriter fw=new FileWriter("src/movielist/movielist.txt");
-		BufferedWriter bw=new BufferedWriter(fw);
-		
-		for(int j=0;j<al.size();j++)
-		{
-			Movie m=al.get(j);
-			System.out.println(m.toString());
-			bw.write(m.toString());
-			bw.write("\n");
-		}
-		bw.close();
-		fw.close();
-		
-		System.out.println("관리자메뉴로 돌아갑니다.");
-		
-		am.choose();
-	}
 }
 class Movie
 {
@@ -333,9 +225,10 @@ class Movie
 	public void setStamp(int stamp) {
 		this.stamp = stamp;
 	}
+	@Override
 	public String toString() {
-		return stamp + ", " + name + ", " + genre;
-	}
+		return stamp + "," + name + "," + genre;
+	}		
 }
 class Reservation implements Serializable// 예매 저장까지 완료
 {
@@ -392,40 +285,48 @@ class Reservation implements Serializable// 예매 저장까지 완료
 	{
 		int idx=-1;
 		Reservation re=null;
-		long num = sc.nextLong(); //확인하려는 영화의 예매번호 입력하기
-		String str;
+		
+		try {
+			long num = sc.nextLong(); //확인하려는 영화의 예매번호 입력하기
+			String str;
 
-		FileReader fr = new FileReader(file);
-		BufferedReader br = new BufferedReader(fr);					
-		
-		while((str=br.readLine()) !=null)
-		{
-			String[] strArray = str.split(",");
-			
-			re = new Reservation(Long.valueOf(strArray[0]),Long.valueOf(strArray[1]),strArray[2],strArray[3]); //영화 소개파일 형식에 맞게 변경
-			list.add(re);
-		}		
-		br.close();
-		fr.close();
-		
-		for(int i=0; i<list.size(); i++)
-		{
-			re=list.get(i);
-			if(num==re.reStamp)
+			FileReader fr = new FileReader(file);
+			BufferedReader br = new BufferedReader(fr);					
+
+			while((str=br.readLine()) !=null)
 			{
-				System.out.println("예매하신 영화는 "+re.getName()+", 좌석번호 : "+re.getSeat()+" 입니다.");
-				idx=i;
-				break;
+				String[] strArray = str.split(",");
+				
+				re = new Reservation(Long.valueOf(strArray[0]),Long.valueOf(strArray[1]),strArray[2],strArray[3]); //영화 소개파일 형식에 맞게 변경
+				list.add(re);
+			}		
+			br.close();
+			fr.close();
+			
+			for(int i=0; i<list.size(); i++)
+			{
+				re=list.get(i);
+				if(num==re.reStamp)
+				{
+					System.out.println("예매하신 영화는 "+re.getName()+", 좌석번호 : "+re.getSeat()+" 입니다.");
+					idx=i;
+					break;
+				}
 			}
-		}
-		if(idx==-1)
-		{
-			System.out.println("예매번호가 바르지 않습니다.");
+			if(idx==-1)
+			{
+				System.out.println("예매번호가 바르지 않습니다.");
 
+				MainMenu main = new MainMenu();
+				main.choose();	
+			}		
+			
+		}catch(InputMismatchException e){ //NumberFormatException
+			System.out.println("잘못 입력하셨습니다.");
 			MainMenu main = new MainMenu();
-			main.choose();	
-		}		
-		return idx;
+			main.choose();				
+		}
+		return idx;	
 	}
 	void confirm() throws IOException //예매 확인하기
 	{		
@@ -452,7 +353,7 @@ class Reservation implements Serializable// 예매 저장까지 완료
 				switch(no)
 				{			
 					case 1:
-						list.remove(idx); //리스트로 하면 이렇게 왜 취소가 안될까요,,, 아,,, 파일에 다시 써야하는구나.. 지우기만 하는 방법은 없나?
+						list.remove(idx); //리스트에서 지우고 파일에 다시 쓰기
 						
 						FileWriter fw = new FileWriter(file);
 						BufferedWriter bw = new BufferedWriter(fw);									
@@ -528,7 +429,7 @@ class Seats
 				BufferedReader br = new BufferedReader(fr);								
 				
 				while((str=br.readLine()) !=null)
-				{
+				{					
 					String[] strArray = str.split(",");
 					
 					re = new Reservation(Long.valueOf(strArray[0]),Long.valueOf(strArray[1]),strArray[2],strArray[3]); //영화 소개파일 형식에 맞게 변경
@@ -594,7 +495,7 @@ class Seats
 				MainMenu main = new MainMenu();
 				main.menuPrint();
 			}			
-			System.out.println("좌석을 선택하세요(예 : E-9)"); //가운데 - 하이픈은 어떻게 강제하지?
+			System.out.println("좌석을 선택하세요(예 : E-9)");
 			System.out.println("처음으로 돌아가려면 'q'를 입력하세요.");
 			
 			seatSelect = sc.next();
@@ -622,7 +523,7 @@ class Seats
 			if(a>5 && a<=0)
 			{
 				System.out.println("잘못 선택하셨습니다.");
-				System.out.println("A~E 사이에서 선택하세요.");
+				System.out.println("A~E 사이에서 A-1 형식으로 선택하세요.");
 				choose(name,stamp);
 			}
 			
@@ -775,9 +676,9 @@ class MovieList // 완료
 	{				
 		FileReader fr = new FileReader(file);
 		BufferedReader br = new BufferedReader(fr);		
-				
+			
 		while((str=br.readLine()) !=null)
-		{					
+		{		
 			String[] strArray = str.split(",");
 			
 			movie = new Movie(Long.valueOf(strArray[0]),strArray[1],strArray[2]); //영화 소개파일 형식에 맞게 변경
