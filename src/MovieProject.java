@@ -186,9 +186,75 @@ class AdminMovie	//영화 등록하기 클래스
 		am.choose();
 	}
 }
-class MovieRemove
+class MovieRemove	//영화 삭제하기 클래스
 {
+	private String str;
+	private String res;
+	private int num;
+	Scanner sc=new Scanner(System.in);
 	
+	void remove() throws IOException
+	{
+		Movie movie=new Movie();
+		
+		FileReader fr=new FileReader("src/movielist/movielist.txt");
+		BufferedReader br=new BufferedReader(fr);
+		
+		ArrayList<Movie> al=new ArrayList<Movie>();
+		
+		while( (str=br.readLine() )!=null)
+		{
+			String[] strArray = str.split(",");
+			
+			movie = new Movie(Long.valueOf(strArray[0]),strArray[1],strArray[2]);
+			al.add(movie);
+			
+		}
+		br.close();
+		fr.close();
+		
+		AdminMenu am=new AdminMenu();
+		
+		for(int i=0;i<al.size();i++)
+		{
+			System.out.print((i+1)+". "+al.get(i).getName()+" / ");
+		}
+		System.out.println();
+			
+		System.out.println("===================================");
+		System.out.println("삭제할 영화 번호를 눌러주세요. ");
+		try {
+			num=sc.nextInt();
+				
+			System.out.println(al.get(num-1).getName()+"를 선택하셨습니다");
+				
+			al.remove(num-1);
+				
+			System.out.println("삭제를 성공하였습니다!!!!!!!!!!!!!!!!");
+			System.out.println("------------------------------");
+			
+			FileWriter fw=new FileWriter("src/movielist/movielist.txt");
+			BufferedWriter bw=new BufferedWriter(fw);
+			
+			for(int j=0;j<al.size();j++)
+			{
+				Movie m=al.get(j);
+				System.out.println(m.toString());
+				bw.write(m.toString());
+				bw.write("\n");
+			}
+			bw.close();
+			fw.close();
+			
+			System.out.println("관리자메뉴로 돌아갑니다.");
+			
+			am.choose();
+		}catch(InputMismatchException e) {
+			System.out.println("잘못된 입력입니다. 메뉴로 돌아갑니다.");
+			
+		}
+		
+	}
 }
 class Movie
 {
