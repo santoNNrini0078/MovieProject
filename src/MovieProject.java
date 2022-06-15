@@ -293,7 +293,7 @@ class Movie
 	}
 	@Override
 	public String toString() {
-		return stamp + "," + name + "," + genre;
+		return stamp+","+name+","+genre;
 	}		
 }
 class Reservation implements Serializable// 예매 저장까지 완료
