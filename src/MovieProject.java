@@ -771,7 +771,7 @@ class Intro //완료
 		main.choose();
 	}
 }
-class MovieList // 완료
+class MovieList // 무비리스트는 무비.txt가 있다는 가정,, 아니라면 if (!file.exists()) 처리.
 {
 	File file = new File("src/movie.txt");	
 	
