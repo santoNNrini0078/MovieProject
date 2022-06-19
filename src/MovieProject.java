@@ -1,5 +1,3 @@
-package test4;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -37,7 +35,7 @@ abstract class AbstractMenu implements Menu //모르겠다요
 	public abstract void menuPrint() throws IOException;
 	public abstract void choose() throws IOException;
 }
-class MainMenu extends AbstractMenu implements Menu
+class MainMenu extends AbstractMenu
 {	
 	//메인 메뉴의 출력과 입력에 따른 처리를 담당	
 	Scanner sc = new Scanner(System.in);
@@ -97,7 +95,7 @@ class MainMenu extends AbstractMenu implements Menu
 			}			
 		}		
 }
-class AdminMenu extends AbstractMenu implements Menu //관리자메뉴 동작확인 O //인풋 미스매치. 
+class AdminMenu extends AbstractMenu //관리자메뉴 동작확인 O //인풋 미스매치. 
 {
 	//관리자 메뉴의 출력과 입력에 따른 처리를 담당
 	Scanner sc=new Scanner(System.in);
@@ -119,7 +117,7 @@ class AdminMenu extends AbstractMenu implements Menu //관리자메뉴 동작확
 				mm.choose();
 			}
 		}catch(InputMismatchException e) {
-			System.out.println("비밀번호가 틀렸습니다.");
+			System.out.println("숫자를 입력하세요.");
 			MainMenu mm = new MainMenu();
 			mm.choose();
 		}
@@ -809,38 +807,48 @@ class MovieList // 완료
 		{							
 			System.out.print((i+1)+". "+al.get(i).getName()+" / "); //사용자가 선택할 수 있게 목록을 화면에 출력		
 		}	
-		System.out.println();	
+		System.out.println();
 	}	
-	void moviChoice() throws IOException
+	void moviChoice()
 	{
-		Scanner sc = new Scanner(System.in);
-		no = sc.nextInt(); // 사용자가 입력한 넘버
-		while(true)
-		{
-			try 
-			{				
-				if(no>0 && no<(al.size()+1))
-				{
-					movie = al.get(no-1); // 사용자가 선택한 번호 불러오기													
-					name = movie.getName();
-					stamp =movie.getStamp();
-					System.out.println(no+". "+name+"를 선택하셨습니다.");
-					break;								
-				}				
-				else
-				{
-					System.out.println("잘못 선택하셨습니다.");
-					MainMenu mm = new MainMenu();
-					mm.choose();					
+		Scanner sc = new Scanner(System.in);		
+		try 
+		{	
+			no = sc.nextInt(); // 사용자가 입력한 넘버
+			while(true)
+			{							
+					if(no>0 && no<(al.size()+1))
+					{
+						movie = al.get(no-1); // 사용자가 선택한 번호 불러오기													
+						name = movie.getName();
+						stamp =movie.getStamp();
+						System.out.println(no+". "+name+"를 선택하셨습니다.");
+						break;								
+					}				
+					else
+					{
+						System.out.println("잘못 선택하셨습니다.");
+						MainMenu mm = new MainMenu();
+						try {
+							mm.choose();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}					
+					}
 				}
-			}
-			catch(InputMismatchException e) //왜 어드민 삭제,등등에서만 위로 올라갈까,,,
-			{
-				System.out.println("숫자만 입력하세요");
-				MainMenu mm = new MainMenu();
+		}
+		catch(InputMismatchException e) //왜 어드민 삭제,등등에서만 위로 올라
+		{
+			System.out.println("숫자만 입력하세요");
+			MainMenu mm = new MainMenu();
+			try {
 				mm.choose();
-			}	
-		}		
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}				
 	}
 	public long getStamp() {
 		return stamp;
