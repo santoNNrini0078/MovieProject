@@ -3,6 +3,7 @@ package test4;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -29,14 +30,13 @@ interface Menu
 	void menuPrint() throws IOException; //메뉴를 화면에 출력
 	void choose() throws IOException;
 }
-abstract class AbstractMenu implements Menu
+abstract class AbstractMenu implements Menu //모르겠다요
 {
 	//Menu 인터페이스를 구현하는 추상 클래스
 	//메인메뉴(MainMenu)와 관리자메뉴(AdminMenu)의 부모클래스	
 	public abstract void menuPrint() throws IOException;
 	public abstract void choose() throws IOException;
 }
-
 class MainMenu extends AbstractMenu implements Menu
 {	
 	//메인 메뉴의 출력과 입력에 따른 처리를 담당	
@@ -45,42 +45,43 @@ class MainMenu extends AbstractMenu implements Menu
 	Reservation re=new Reservation();
 	MainMenu()
 	{
-		
+		super();
 	}	
 	public void menuPrint()
 	{
 		System.out.println("================================");
 		System.out.println("==========영화 예매 프로그램=========");
-		System.out.println("================================");			
+		System.out.println("================================");	
 	}	
 	public void choose() throws IOException
 	{
 		System.out.println("1.영화 소개 / 2.영화 예매 / 3.예매 확인 / 4.예매 취소 / 5.관리자메뉴 / 6.종료");
 		System.out.println("메뉴를 선택하세요.");
-		boolean select = true;
 		String menu;
 		
-		while(select)
+		while(true)
 		{
-			MovieList ml=new MovieList();
-			
+			MovieList ml=new MovieList();		
 			menu = sc.next();							
 			switch(menu) {				
 			case "1":
+				ml.movieListPrint();
+				ml.moviChoice();
 				Intro intro = new Intro();
 				intro.IntroPrint(ml.getName());
 				break;
-			case "2":						
+			case "2":
 				ml.movieListPrint();
+				ml.moviChoice();
 				Seats se=new Seats();
 				se.viewSeat(ml.getName());
 				se.choose(ml.getName(),ml.getStamp());
 				re = new Reservation(ml.getStamp(),reStamp,ml.getName(),se.getSeatSelect());
 				break;
-			case "3":
+			case "3":				
 				re.confirm();
 				break;
-			case "4":
+			case "4":				
 				re.cancel();
 				break;
 			case "5":
@@ -104,19 +105,25 @@ class AdminMenu extends AbstractMenu implements Menu //관리자메뉴 동작확
 	{
 		System.out.println("관리자 메뉴입니다. 비밀번호를 입력해주세요.");
 		int passwd=1234;
-		while(true)
-		{
-			int adpass=sc.nextInt();
-			if(passwd==adpass)
+		try {
+			while(true)
 			{
-				System.out.println("인증에 성공하였습니다.");
-				choose();
+				int adpass=sc.nextInt();
+				if(passwd == adpass)
+				{
+					System.out.println("인증에 성공하였습니다.");
+					choose();
+				}			
+				System.out.println("비밀번호가 틀렸습니다..");
+				MainMenu mm = new MainMenu();
+				mm.choose();
 			}
-			else
-			{
-				System.out.println("비밀번호가 틀렸습니다. 다시 입력해주세요.");
-			}
+		}catch(InputMismatchException e) {
+			System.out.println("비밀번호가 틀렸습니다.");
+			MainMenu mm = new MainMenu();
+			mm.choose();
 		}
+		
 	}
 	public void choose() throws IOException
 	{
@@ -126,27 +133,29 @@ class AdminMenu extends AbstractMenu implements Menu //관리자메뉴 동작확
 			MovieList ml=new MovieList();
 			System.out.println("1.영화 등록하기 / 2.영화 목록보기 / 3.영화 삭제하기 / 4.영화소개 등록하기 / 5.메인메뉴로 이동하기");
 			System.out.println("메뉴를 선택해주세요.");
-			int num=sc.nextInt();	//int 입력이라 try catch
+			String num=sc.next();	//int 입력이면 try catch
 			switch(num)
 			{
-				case 1:
+				case "1":
 					AdminMovie am=new AdminMovie();
 					am.FileWriter();
 					break;
-				case 2:					
+				case "2":					
 					ml.movieListPrint();
 					break;
-				case 3:
+				case "3":
 					MovieRemove mr=new MovieRemove();
 					ml.movieListPrint();
+					ml.moviChoice();
 					mr.remove(ml.getName());
 					break;
-				case 4:	
+				case "4":	
 					ml.movieListPrint();
+					ml.moviChoice();
 					MovieStory ms = new MovieStory(ml.getName());
 					ms.storyWriter();
 					break;
-				case 5:
+				case "5":
 					MainMenu mm=new MainMenu();
 					mm.menuPrint();
 					mm.choose();
@@ -164,13 +173,13 @@ class AdminMovie	//영화 등록하기 클래스 // 파일이 없으면 만들�
 	AdminMenu am=new AdminMenu();
 	private String moviename;
 	private String moviegenre;
-	private int no;
 	private long stamp=System.currentTimeMillis();
 	private String str;
 	
 	void FileWriter() throws IOException
 	{
-		FileWriter fw=new FileWriter("src/movie.txt",true);
+		File file = new File("src/movie.txt");
+		FileWriter fw=new FileWriter(file,true);
 		BufferedWriter bw=new BufferedWriter(fw);
 		
 		System.out.println("영화 제목을 입력해주세요.");
@@ -178,6 +187,12 @@ class AdminMovie	//영화 등록하기 클래스 // 파일이 없으면 만들�
 		System.out.println("영화 장르를 입력해주세요.");
 		moviegenre=sc.nextLine();
 		str=stamp+","+moviename+","+moviegenre;
+		
+		if (!file.exists())
+		{
+			System.out.println("파일을 생성합니다.");
+			file.createNewFile();
+		}
 		
 		try {
 			bw.write(str);
@@ -187,10 +202,6 @@ class AdminMovie	//영화 등록하기 클래스 // 파일이 없으면 만들�
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
-		
-		
 		System.out.println("++++++++++++++++++++++++++++++++++++++++");
 		System.out.println("영화 등록에 성공하였습니다. 관리자 메뉴로 돌아갑니다.");
 		System.out.println("++++++++++++++++++++++++++++++++++++++++");
@@ -202,8 +213,6 @@ class AdminMovie	//영화 등록하기 클래스 // 파일이 없으면 만들�
 class MovieRemove	//영화 삭제하기 클래스
 {
 	private String str;
-	private String res;
-	private int num;
 	String name;
 	Scanner sc=new Scanner(System.in);
 	MovieRemove()
@@ -230,8 +239,7 @@ class MovieRemove	//영화 삭제하기 클래스
 		}
 		br.close();
 		fr.close();
-		System.out.println("선택하신 영화를 삭제합니다.");
-		
+		System.out.println("선택하신 영화를 삭제합니다.");		
 		
 		for(int i=0; i<al.size(); i++)
 		{
@@ -261,10 +269,8 @@ class MovieRemove	//영화 삭제하기 클래스
 			System.out.println("관리자메뉴로 돌아갑니다.");			
 			am.choose();
 		}catch(InputMismatchException e) {
-			System.out.println("잘못된 입력입니다. 메뉴로 돌아갑니다.");
-			
-		}
-		
+			System.out.println("잘못된 입력입니다. 메뉴로 돌아갑니다.");			
+		}		
 	}
 }
 class MovieStory
@@ -281,9 +287,7 @@ class MovieStory
 		File file = new File("src/"+name+".txt");
 		FileWriter fw = new FileWriter(file,true); //파일이 날아가지 않게 추가하기 (name,append)
 		BufferedWriter bw = new BufferedWriter(fw);
-		AdminMenu am = new AdminMenu();
 		String q = "q";
-		//		ArrayList<String> al = new ArrayList<String>();
 		
 		if (!file.exists())
 		{
@@ -296,8 +300,13 @@ class MovieStory
 		String story="";
 		while(!story.equals(q))
 		{				
-			story = sc.next();
-			bw.write(story+"\n");		//q도 저장되네.. ㅜㅜ
+			story = sc.nextLine();
+			if(story.equals(q)) //q가 저장되는 것을 방지하기 위해.
+			{
+				System.out.println("저장이 완료되었습니다.");
+				break;
+			}
+			bw.write(story+"\n");
 		}
 		bw.close();
 		fw.close();
@@ -437,7 +446,8 @@ class Reservation implements Serializable// 예매 저장까지 완료
 		}catch(InputMismatchException e){ //NumberFormatException
 			System.out.println("잘못 입력하셨습니다.");
 			MainMenu main = new MainMenu();
-			main.choose();				
+			main.choose();
+			
 		}
 		return idx;	
 	}
@@ -458,7 +468,6 @@ class Reservation implements Serializable// 예매 저장까지 완료
 		System.out.println("1. 예매 취소 / 2. 처음으로 돌아가기");
 		
 		MainMenu main = new MainMenu();
-		String str="";
 		while(true)
 		{
 			try {
@@ -599,7 +608,7 @@ class Seats
 		this.stamp=stamp;
 		Scanner sc = new Scanner(System.in);	
 		
-		while(!seatSelect.equals('q') || isFull ==false)
+		while(!seatSelect.equals("q") || isFull ==false)
 		{
 			isFull = isFull(seat);
 			if(isFull)
@@ -730,40 +739,36 @@ class Seats
 }
 class Intro //완료
 {
-	File file = new File("src/movie.txt");	
-	Movie movie=new Movie();
 	Intro()
 	{
-		
-	}
+	
+	}	
+	Movie movie=new Movie();
+	String name;	
 	MovieList ml=new MovieList();
 	
 	void IntroPrint(String mvname) throws IOException
 	{			
-		ml.movieListPrint();		
-		String name= ml.getName();
+		this.name=mvname;
+		File file = new File("src/"+name+".txt");
+		if (!file.exists())
+		{
+			System.out.println("영화 소개가 존재하지 않습니다.");
+			MainMenu mm = new MainMenu();
+			mm.choose();			
+		}
 		
 		FileReader fr = new FileReader(file);
 		BufferedReader br = new BufferedReader(fr);
 		String str=null;
-		ArrayList<Movie> al = new ArrayList<Movie>();
 				
 		while((str=br.readLine()) !=null)
 		{
-			String[] strArray = str.split(",");			
-			movie = new Movie(Long.valueOf(strArray[0]),strArray[1],strArray[2]); //영화 소개파일 형식에 맞게 변경
-			al.add(movie);
+			System.out.println(str);
 		}
 		br.close();
 		fr.close();
-		
-		String path2 ="src/"+name+".txt";
-		FileReader fr2 = new FileReader(path2);
-		BufferedReader br2 = new BufferedReader(fr2);
-		while((str=br2.readLine()) !=null)
-		{
-			System.out.println(str);
-		}
+
 		MainMenu main = new MainMenu();
 		main.choose();
 	}
@@ -776,7 +781,6 @@ class MovieList // 완료
 	private String name;
 	private long stamp;
 	int no;
-	boolean flag=true;
 	String str;
 	
 	ArrayList<Movie> al = new ArrayList<Movie>();
@@ -786,10 +790,10 @@ class MovieList // 완료
 		
 	}
 	void movieListPrint() throws IOException
-	{				
+	{		
 		FileReader fr = new FileReader(file);
 		BufferedReader br = new BufferedReader(fr);		
-			
+		
 		while((str=br.readLine()) !=null)
 		{		
 			String[] strArray = str.split(",");
@@ -798,20 +802,21 @@ class MovieList // 완료
 			al.add(movie);
 		}
 		br.close();
-		fr.close();				
-			
+		fr.close();	
+			 						
+		System.out.println("현재 상영중인 영화입니다.");
+		for(int i=0; i<al.size(); i++)
+		{							
+			System.out.print((i+1)+". "+al.get(i).getName()+" / "); //사용자가 선택할 수 있게 목록을 화면에 출력		
+		}	
+		System.out.println();	
+	}	
+	void moviChoice() throws IOException
+	{
 		Scanner sc = new Scanner(System.in);
-		
-		while(flag==true)
-		{				
-			System.out.println("현재 상영중인 영화입니다.");
-			for(int i=0; i<al.size(); i++)
-			{							
-				System.out.print((i+1)+". "+al.get(i).getName()+" / "); //사용자가 선택할 수 있게 목록을 화면에 출력
-			}	
-			System.out.println();
-			
-			no = sc.nextInt(); // 사용자가 입력한 넘버
+		no = sc.nextInt(); // 사용자가 입력한 넘버
+		while(true)
+		{
 			try 
 			{				
 				if(no>0 && no<(al.size()+1))
@@ -820,20 +825,22 @@ class MovieList // 완료
 					name = movie.getName();
 					stamp =movie.getStamp();
 					System.out.println(no+". "+name+"를 선택하셨습니다.");
-					flag=false;
 					break;								
 				}				
 				else
 				{
 					System.out.println("잘못 선택하셨습니다.");
+					MainMenu mm = new MainMenu();
+					mm.choose();					
 				}
 			}
-			catch(InputMismatchException e)
+			catch(InputMismatchException e) //왜 어드민 삭제,등등에서만 위로 올라갈까,,,
 			{
 				System.out.println("숫자만 입력하세요");
-				sc = new Scanner(System.in);
+				MainMenu mm = new MainMenu();
+				mm.choose();
 			}	
-		}
+		}		
 	}
 	public long getStamp() {
 		return stamp;
