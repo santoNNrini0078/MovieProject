@@ -1,3 +1,4 @@
+package test5;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -52,7 +53,7 @@ class MainMenu extends AbstractMenu
 		System.out.println("================================");	
 	}	
 	public void choose() throws IOException
-	{
+	{//종료를 사용자가 누르면 안되는데??
 		System.out.println("1.영화 소개 / 2.영화 예매 / 3.예매 확인 / 4.예매 취소 / 5.관리자메뉴 / 6.종료");
 		System.out.println("메뉴를 선택하세요.");
 		String menu;
@@ -249,7 +250,12 @@ class MovieRemove	//영화 삭제하기 클래스
 			}
 		}		
 		try {							
-			al.remove(idx);
+			
+			String rmname = al.get(idx).getName();
+			File rmfile = new File("src/"+rmname+".txt");
+			rmfile.delete(); //소개 파일도 함께 삭제한다.
+			
+			al.remove(idx); // 무비 파일에서 먼저 삭제되면 소개파일을 찾을 수 없기 때문에 소개파일을 먼저 삭제 후 무비파일에서 영화목록을 삭제한다.
 				
 			System.out.println("삭제를 완료하였습니다!!!!!!!!!!!!!!!!");
 						
@@ -263,7 +269,7 @@ class MovieRemove	//영화 삭제하기 클래스
 			}
 			bw.close();
 			fw.close();
-			
+						
 			System.out.println("관리자메뉴로 돌아갑니다.");			
 			am.choose();
 		}catch(InputMismatchException e) {
